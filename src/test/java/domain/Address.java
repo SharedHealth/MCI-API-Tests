@@ -6,7 +6,7 @@ public class Address {
     private String district;
     private String upazilla;
     private String cityCorporation;
-    private String union;
+    private String union_or_urban_ward;
     private String addressLine1;
 
     public String getDivision() {
@@ -21,8 +21,8 @@ public class Address {
         return upazilla;
     }
 
-    public String getUnion() {
-        return union;
+    public String getUnion_or_urban_ward() {
+        return union_or_urban_ward;
     }
 
     public String getCityCorporation() {
@@ -36,7 +36,7 @@ public class Address {
         this.district = builder.district;
         this.upazilla = builder.upazilla;
         this.cityCorporation = builder.cityCorporation;
-        this.union = builder.union;
+        this.union_or_urban_ward = builder.union_or_urban_ward;
         this.addressLine1 = builder.addressLine1;
     }
 
@@ -46,7 +46,7 @@ public class Address {
         sb.append("division='").append(division).append('\'');
         sb.append(", district='").append(district).append('\'');
         sb.append(", upazilla='").append(upazilla).append('\'');
-        sb.append(", union='").append(union).append('\'');
+        sb.append(", union_or_urban_ward='").append(union_or_urban_ward).append('\'');
         sb.append(", addressLine1='").append(addressLine1).append('\'');
         sb.append('}');
         return sb.toString();
@@ -57,7 +57,7 @@ public class Address {
         private String division;
         private String district;
         private String upazilla;
-        private String union;
+        private String union_or_urban_ward;
         private String addressLine1;
         private String cityCorporation;
 
@@ -76,8 +76,8 @@ public class Address {
             return this;
         }
 
-        public AddressBuilder union(String union) {
-            this.union = union;
+        public AddressBuilder union_or_urban_ward(String union_or_urban_ward) {
+            this.union_or_urban_ward = union_or_urban_ward;
             return this;
         }
 
