@@ -9,6 +9,7 @@ public class PatientDetails {
     private String nid;
     private String gender;
 
+
     public PatientDetails( String given_name, String sur_name, String dateOfBirth,String nid,String gender) {
         this.given_name = given_name;
         this.sur_name = sur_name;
