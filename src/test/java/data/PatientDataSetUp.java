@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
+import utils.WebDriverProperties;
 
 import static com.jayway.restassured.RestAssured.basic;
 import static com.jayway.restassured.config.EncoderConfig.encoderConfig;
@@ -16,27 +17,16 @@ import static com.jayway.restassured.config.EncoderConfig.encoderConfig;
  */
 public class PatientDataSetUp {
 
-
+    public String token;
     @Before
-    public void invokeApp() {
+    public void invokeApp() throws JSONException {
 
-
-
-
-
-        // RestAssured.baseURI = "http://172.18.46.56";
-        RestAssured.baseURI = "http://172.18.46.56:8081";
-//      RestAssured.baseURI = WebDriverProperties.getProperty("mciURL");
-//        RestAssured.port = 8081;
-        RestAssured.basePath = "/api/v1";
-        RestAssured.authentication = basic("mci", "password");
+        token = WebDriverProperties.getToken();
+        RestAssured.baseURI = WebDriverProperties.getProperty("MCI_API_BASE_URI");
+        RestAssured.port = Integer.parseInt(WebDriverProperties.getProperty("MCI_API_PORT"));
+        RestAssured.basePath = WebDriverProperties.getProperty("MCI_API_BASE_PATH");
         RestAssured.rootPath = "";
         RestAssured.config = new RestAssuredConfig().encoderConfig(encoderConfig().defaultContentCharset("UTF-8"));
-    }
-
-    private void pendingApprovalURLbyHID(String hid){
-
-
     }
 
     protected JSONObject createPatientDataJsonToPost(Patient primaryPatient) {
@@ -50,9 +40,7 @@ public class PatientDataSetUp {
             person.put("sur_name", primaryPatient.getSur_name());
             person.put("date_of_birth", primaryPatient.getDateOfBirth());
             person.put("gender", primaryPatient.getGender());
-            //present_address.put("present_address", primaryPatient.getAddress());
             present_address.put("address_line", primaryPatient.getAddress().getAddressLine1());
-            //present_address.put("address_line", "test");
             present_address.put("division_id", primaryPatient.getAddress().getDivision());
             present_address.put("district_id", primaryPatient.getAddress().getDistrict());
             present_address.put("upazila_id", primaryPatient.getAddress().getUpazilla());
@@ -63,7 +51,6 @@ public class PatientDataSetUp {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-//        System.out.println(person.toString());
         return person;
     }
 

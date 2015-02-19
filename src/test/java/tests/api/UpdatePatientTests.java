@@ -11,6 +11,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import utils.WebDriverProperties;
 
 
 import static com.jayway.restassured.RestAssured.given;
@@ -35,13 +36,15 @@ public class UpdatePatientTests extends PatientDataSetUp {
      */
 
     @Category(ApiTest.class)
+    @Ignore
     @Test
     public void verifyUpdatedPatientApprovalApproved() throws JSONException, InterruptedException {
 
         primaryPatient= dataStore.defaultPatient;
 
         JSONObject person = createPatientDataJsonToPost(primaryPatient);
-        given().contentType("Application/json")
+        given().contentType("application/json")
+               .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                .body(person.toString())
                .when().post("/patients")
                .then().assertThat().statusCode(201);
@@ -50,6 +53,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
 
         hid=(given().pathParam("bin_brn", primaryPatient.getBinBRN())
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients?bin_brn={bin_brn}")
                 .andReturn().print().substring(38, 57));
 
@@ -59,6 +63,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
         given().contentType("Application/json")
                 .pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .body(updatedValue.toString())
                 .when().put("/patients/{hid}")
                 .then().assertThat().statusCode(202);
@@ -69,6 +74,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
         given().contentType("Application/json")
                 .pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .body(updatedValue.toString())
                 .when().put(ApprovalURL)
                 .then().assertThat().statusCode(202);
@@ -76,10 +82,12 @@ public class UpdatePatientTests extends PatientDataSetUp {
         System.out.println("Patient detail is approved for update");
 
         given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients/{hid}")
                 .andReturn().body().print();
 
         given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients/{hid}")
                 .then()
                 .body("given_name", Matchers.equalTo(updatedValue.get("given_name")));
@@ -103,6 +111,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
         JSONObject person = createPatientDataJsonToPost(primaryPatient);
         given().contentType("Application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .body(person.toString())
                 .when().post("/patients")
                 .then().assertThat().statusCode(201);
@@ -111,6 +120,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
 
         hid=(given().pathParam("bin_brn", primaryPatient.getBinBRN())
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients?bin_brn={bin_brn}")
                 .andReturn().print().substring(38,57));
 
@@ -119,6 +129,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
         System.out.println(updatedValue.get("given_name"));
 
         given().contentType("Application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .pathParam("hid", hid)
                 .body(updatedValue.toString())
                 .when().put("/patients/{hid}")
@@ -127,6 +138,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
         System.out.println("Patient is mark for updatation");
 
         given().contentType("Application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .pathParam("hid", hid)
                 .body(updatedValue.toString())
                 .when().delete(ApprovalURL)
@@ -135,10 +147,12 @@ public class UpdatePatientTests extends PatientDataSetUp {
         System.out.println("Patient  detail is rejected for update");
 
         given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients/{hid}")
                 .andReturn().body().print();
 
         given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients/{hid}")
                 .then()
                 .body("given_name", Matchers.equalTo(primaryPatient.getGiven_name()));
@@ -155,6 +169,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
         JSONObject person = createPatientDataJsonToPost(primaryPatient);
         given().contentType("Application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .body(person.toString())
                 .when().post("/patients")
                 .then().assertThat().statusCode(201);
@@ -163,6 +178,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
 
         hid=(given().pathParam("bin_brn", primaryPatient.getBinBRN())
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients?bin_brn={bin_brn}")
                 .andReturn().print().substring(38,57));
 
@@ -172,6 +188,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
         given().contentType("Application/json")
                 .pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .body(AddNewValue.toString())
                 .when().put("/patients/{hid}")
                 .then().assertThat().statusCode(202);
@@ -182,6 +199,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
         given().contentType("Application/json")
                 .pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .body(AddNewValue.toString())
                 .when().put(ApprovalURL)
                 .then().assertThat().statusCode(202);
@@ -189,10 +207,12 @@ public class UpdatePatientTests extends PatientDataSetUp {
         System.out.println("Patient detail is approved for new data");
 
         given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients/{hid}")
                 .andReturn().body().print();
 
         given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients/{hid}")
                 .then()
                 .body("occupation", Matchers.equalTo(AddNewValue.get("occupation")));
@@ -209,6 +229,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
         JSONObject person = createPatientDataJsonToPost(primaryPatient);
         given().contentType("Application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .body(person.toString())
                 .when().post("/patients")
                 .then().assertThat().statusCode(201);
@@ -217,6 +238,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
 
         hid=(given().pathParam("bin_brn", primaryPatient.getBinBRN())
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients?bin_brn={bin_brn}")
                 .andReturn().print().substring(38,57));
 
@@ -226,6 +248,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
         given().contentType("Application/json")
                 .pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .body(AddNewValue.toString())
                 .when().put("/patients/{hid}")
                 .then().assertThat().statusCode(202);
@@ -236,6 +259,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
         given().contentType("Application/json")
                 .pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .body(AddNewValue.toString())
                 .when().delete(ApprovalURL)
                 .then().assertThat().statusCode(202);
@@ -243,10 +267,12 @@ public class UpdatePatientTests extends PatientDataSetUp {
         System.out.println("Patient detail is rejected for new data");
 
         given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients/{hid}")
                 .andReturn().body().print();
 
         given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients/{hid}")
                 .then()
                 .body("occupation", Matchers.nullValue());
@@ -263,6 +289,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
         JSONObject person = createPatientDataJsonToPost(primaryPatient);
         given().contentType("Application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .body(person.toString())
                 .when().post("/patients")
                 .then().assertThat().statusCode(201);
@@ -271,6 +298,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
 
         hid=(given().pathParam("bin_brn", primaryPatient.getBinBRN())
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients?bin_brn={bin_brn}")
                 .andReturn().print().substring(38,57));
 
@@ -280,6 +308,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
         System.out.println(updatedValue.get("gender"));
 
         given().contentType("Application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .pathParam("hid", hid)
                 .body(updatedValue.toString())
                 .when().put("/patients/{hid}")
@@ -290,6 +319,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
 
         given().contentType("Application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .pathParam("hid", hid)
                 .body(updatedValue.toString())
                 .when().put(ApprovalURL)
@@ -298,10 +328,12 @@ public class UpdatePatientTests extends PatientDataSetUp {
         System.out.println("Patient details is approved for update");
 
         given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients/{hid}")
                 .andReturn().body().print();
 
         given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients/{hid}")
                 .then()
                 .body("given_name", Matchers.equalTo(updatedValue.get("given_name")))
@@ -319,6 +351,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
         JSONObject person = createPatientDataJsonToPost(primaryPatient);
         given().contentType("Application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .body(person.toString())
                 .when().post("/patients")
                 .then().assertThat().statusCode(201);
@@ -327,6 +360,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
 
         hid=(given().pathParam("bin_brn", primaryPatient.getBinBRN())
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients?bin_brn={bin_brn}")
                 .andReturn().print().substring(38,57));
 
@@ -336,6 +370,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
         System.out.println(updatedValue.get("gender"));
 
         given().contentType("Application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .pathParam("hid", hid)
                 .body(updatedValue.toString())
                 .when().put("/patients/{hid}")
@@ -347,6 +382,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
         given().contentType("Application/json")
                 .pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .body(updatedValue.toString())
                 .when().delete(ApprovalURL)
                 .then().assertThat().statusCode(202);
@@ -354,10 +390,12 @@ public class UpdatePatientTests extends PatientDataSetUp {
         System.out.println("Patient details is rejected for update");
 
         given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients/{hid}")
                 .andReturn().body().print();
 
         given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients/{hid}")
                 .then()
                 .body("given_name", Matchers.equalTo(primaryPatient.getGiven_name()))
@@ -375,6 +413,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
         JSONObject person = createPatientDataJsonToPost(primaryPatient);
         given().contentType("Application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .body(person.toString())
                 .when().post("/patients")
                 .then().assertThat().statusCode(201);
@@ -383,6 +422,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
 
         hid=(given().pathParam("bin_brn", primaryPatient.getBinBRN())
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients?bin_brn={bin_brn}")
                 .andReturn().print().substring(38,57));
 
@@ -392,6 +432,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
             updatedValue.put("given_name", "Firstupdated"+i);
 
             given().contentType("Application/json")
+                    .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                     .pathParam("hid", hid)
                     .body(updatedValue.toString())
                     .when().put("/patients/{hid}")
@@ -406,6 +447,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
 
         given().contentType("Application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .pathParam("hid", hid)
                 .body(updatedValue.toString())
                 .when().put(ApprovalURL)
@@ -414,10 +456,12 @@ public class UpdatePatientTests extends PatientDataSetUp {
         System.out.println("Patient details is approved for update");
 
         given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients/{hid}")
                 .andReturn().body().print();
 
         given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients/{hid}")
                 .then()
                 .body("given_name", Matchers.equalTo(updatedValue.get("given_name")));
@@ -433,7 +477,8 @@ public class UpdatePatientTests extends PatientDataSetUp {
         primaryPatient= dataStore.defaultPatient;
 
         JSONObject person = createPatientDataJsonToPost(primaryPatient);
-        given().contentType("Application/json")
+        given().contentType("application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token)
                 .body(person.toString())
                 .when().post("/patients")
                 .then().assertThat().statusCode(201);
@@ -442,10 +487,12 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
 
         hid=(given().pathParam("bin_brn", primaryPatient.getBinBRN())
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients?bin_brn={bin_brn}")
                 .andReturn().print().substring(38,57));
 
         String beforeUpdate=given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients/{hid}")
                 .andReturn().body().print();
 
@@ -460,6 +507,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
         given().contentType("Application/json")
                 .pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .body(AddNewValue.toString())
                 .when().put("/patients/{hid}")
                 .then().assertThat().statusCode(202);
@@ -470,6 +518,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
         given().contentType("Application/json")
                 .pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .body(AddNewValue.toString())
                 .when().put(ApprovalURL)
                 .then().assertThat().statusCode(202);
@@ -477,16 +526,19 @@ public class UpdatePatientTests extends PatientDataSetUp {
         System.out.println("Patient detail is approved for new block of data");
 
         given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients/{hid}")
                 .andReturn().body().print();
 
         String afterUpdateApproved=given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients/{hid}")
                 .andReturn().body().print();
 
 
 
         given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients/{hid}")
                 .then()
                 .body("phone_number.country_code", Matchers.equalTo(updatedValue.get("country_code")))
@@ -507,6 +559,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
         JSONObject person = createPatientDataJsonToPost(primaryPatient);
         given().contentType("Application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .body(person.toString())
                 .when().post("/patients")
                 .then().assertThat().statusCode(201);
@@ -514,10 +567,12 @@ public class UpdatePatientTests extends PatientDataSetUp {
         System.out.println("Patient created in MCI ");
 
         hid=(given().pathParam("bin_brn", primaryPatient.getBinBRN())
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients?bin_brn={bin_brn}")
                 .andReturn().print().substring(38,57));
 
         String beforeUpdate=given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients/{hid}")
                 .andReturn().body().print();
 
@@ -531,6 +586,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
         System.out.println(AddNewValue);
 
         given().contentType("Application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .pathParam("hid", hid)
                 .body(AddNewValue.toString())
                 .when().put("/patients/{hid}")
@@ -541,6 +597,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
 
         given().contentType("Application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .pathParam("hid", hid)
                 .body(AddNewValue.toString())
                 .when().delete(ApprovalURL)
@@ -549,6 +606,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
         System.out.println("Patient detail is rejected for updation");
 
         String afterUpdateRejected=given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients/{hid}")
                 .andReturn().body().print();
 
@@ -563,6 +621,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
     }
 
     @Category(ApiTest.class)
+    @Ignore
     @Test
     public void verifySearchAfterUpdatedPatientDataWithNameAddress() throws JSONException, InterruptedException {
 
@@ -570,6 +629,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
         updatePatientTests.verifyUpdatedPatientApprovalApproved();
 
         given().pathParam("name", updatePatientTests.updatedValue.get("given_name"))
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients?given_name={name}&present_address=100409")
                 .then()
                 .body("results.given_name[0]", Matchers.equalTo(updatePatientTests.updatedValue.get("given_name")))
@@ -583,6 +643,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
     }
     @Category(ApiTest.class)
+    @Ignore
     @Test
     public void verifySearchAfterBlockUpdateByPhoneNo() throws JSONException, InterruptedException {
 
@@ -590,9 +651,11 @@ public class UpdatePatientTests extends PatientDataSetUp {
         updatePatientTests.verifyNewlyPatientBlockDataApproved();
 
         given().pathParam("phoneNumber", updatePatientTests.updatedValue.get("number"))
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients?phone_no={phoneNumber}")
                 .print();
         given().pathParam("phoneNumber", updatePatientTests.updatedValue.get("number"))
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients?phone_no={phoneNumber}")
                 .then()
                 .body("results.given_name[0]", Matchers.equalTo(updatePatientTests.primaryPatient.getGiven_name()))

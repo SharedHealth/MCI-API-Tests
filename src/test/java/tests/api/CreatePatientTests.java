@@ -9,10 +9,9 @@ import org.hamcrest.Matchers;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import utils.WebDriverProperties;
 
 import static com.jayway.restassured.RestAssured.given;
-
-
 
 public class CreatePatientTests extends PatientDataSetUp {
 
@@ -27,14 +26,14 @@ public class CreatePatientTests extends PatientDataSetUp {
         primaryPatient = dataStore.defaultPatient;
 
         JSONObject person = createPatientDataJsonToPost(primaryPatient);
-        person.remove("bin_brn");
-        given().contentType("application/json")
+        given().contentType("application/json").header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .body(person.toString())
                 .when().post("/patients")
                 .then().assertThat().statusCode(201);
         System.out.println("Patient with NID " + primaryPatient.getNid() + " created in MCI ");
 
         given().pathParam("nid", primaryPatient.getNid())
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients?nid={nid}")
                 .then()
                 .body("results.hid[0]", Matchers.notNullValue())
@@ -64,10 +63,10 @@ public class CreatePatientTests extends PatientDataSetUp {
 
         JSONObject person = createPatientDataJsonToPost(primaryPatient);
         ValidatableResponse body = given().contentType("application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .body(person.toString())
                 .when().post("/patients")
                 .then()
-//                .log().body(true)
                 .assertThat().statusCode(400)
                 .body("error_code", Matchers.equalTo(1000))
                 .body("errors.code[0]", Matchers.equalTo(1002))
@@ -86,6 +85,7 @@ public class CreatePatientTests extends PatientDataSetUp {
         JSONObject person = createPatientDataJsonToPost(primaryPatient);
         person.remove("nid");
         given().contentType("application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .body(person.toString())
                 .when().post("/patients")
                 .then().assertThat().statusCode(201);
@@ -94,6 +94,7 @@ public class CreatePatientTests extends PatientDataSetUp {
 
         System.out.println(person.toString());
         given().pathParam("bin_brn", primaryPatient.getBinBRN())
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients?bin_brn={bin_brn}")
                 .then()
 
@@ -109,11 +110,6 @@ public class CreatePatientTests extends PatientDataSetUp {
                 .body("results.present_address.upazila_id[0]", Matchers.equalTo("09"))
                 .body("results.present_address.city_corporation_id[0]", Matchers.equalTo("99"))
                 .body("results.present_address.union_or_urban_ward_id[0]", Matchers.equalTo("13"));
-
-
-
-
-
 
         System.out.println("Patient with BRN " + primaryPatient.getBinBRN() + " verified in MCI");
 
