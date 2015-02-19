@@ -1,18 +1,11 @@
 package data;
 
-import domain.Address;
 import domain.Patient;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class PatientDataStore {
 
 
     protected AddressDataStore address = new AddressDataStore();
-
-
-
-
 
     private  String id1 = String.valueOf(System.currentTimeMillis()).substring(7);
 

@@ -1,13 +1,10 @@
 package data;
 
 import domain.Address;
-import domain.Patient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by ashutosh on 22/12/14.
- */
+
 public class AddressDataStore {
 
 
@@ -151,22 +148,4 @@ public class AddressDataStore {
 
         return present_address;
     }
-
-//    public Patient defaultPatient = new Patient()
-//            .withNid("9000000" + id1)
-//            .withBRN("90000001234" + id1)
-//            .withGiven_name("A" + id1)
-//            .withSur_name("ATEST")
-//            .withDateOfBirth("2000-03-01")
-//            .withGender("M");
-//
-//    public Patient patientWithInvalidNID = new Patient()
-//            .withNid("invalid")
-//            .withBRN("90000001234" + id1)
-//            .withGiven_name("A" + id1)
-//            .withSur_name("ATEST")
-//            .withDateOfBirth("2000-03-01")
-//            .withGender("M");
-//
-//}
 }
