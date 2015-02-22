@@ -8,7 +8,6 @@ import org.hamcrest.Matchers;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import utils.WebDriverProperties;
@@ -17,7 +16,7 @@ import utils.WebDriverProperties;
 import static com.jayway.restassured.RestAssured.given;
 
 
-public class UpdatePatientTests extends PatientDataSetUp {
+public class PatientApprovalTests extends PatientDataSetUp {
 
     String ApprovalURL="/catchments/100409/approvals/{hid}/";
     protected Patient primaryPatient;
@@ -27,7 +26,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
     @Category(ApiTest.class)
     @Test
-    public void verifyUpdatedPatientApprovalApproved() throws JSONException, InterruptedException {
+    public void verifyGivenNameUpdateUsingPatientApprovalAcceptProcess() throws JSONException, InterruptedException {
 
         primaryPatient= dataStore.defaultPatient;
 
@@ -53,7 +52,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
     @Category(ApiTest.class)
     @Test
-    public void verifyUpdatedPatientApprovalRejected() throws JSONException, InterruptedException {
+    public void verifyGivenNameUpdateUsingPatientApprovalRejectProcess() throws JSONException, InterruptedException {
 
         primaryPatient= dataStore.defaultPatient;
 
@@ -79,7 +78,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
     @Category(ApiTest.class)
     @Test
-    public void verifyNewlyPatientDataApproved() throws JSONException, InterruptedException {
+    public void verifyOccupationUpdateUsingPatientApprovalAcceptProcess() throws JSONException, InterruptedException {
 
         primaryPatient= dataStore.defaultPatient;
 
@@ -108,7 +107,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
     @Category(ApiTest.class)
     @Test
-    public void verifyNewlyPatientDataRejected() throws JSONException, InterruptedException {
+    public void verifyOccupationUpdateUsingPatientApprovalRejectProcess() throws JSONException, InterruptedException {
 
         primaryPatient= dataStore.defaultPatient;
 
@@ -138,7 +137,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
     @Category(ApiTest.class)
     @Test
-    public void verifyMultipleUpdatedPatientApprovalApproved() throws JSONException, InterruptedException {
+    public void verifyMultipleFieldUpdateUsingPatientApprovalAcceptProcess() throws JSONException, InterruptedException {
 
         primaryPatient= dataStore.defaultPatient;
 
@@ -168,7 +167,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
     @Category(ApiTest.class)
     @Test
-    public void verifyMultipleUpdatedPatientApprovalRejected() throws JSONException, InterruptedException {
+    public void verifyMultipleFieldUpdateUsingPatientApprovalRejectProcess() throws JSONException, InterruptedException {
 
         primaryPatient= dataStore.defaultPatient;
 
@@ -199,7 +198,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
     @Category(ApiTest.class)
     @Test
-    public void verifyMultiUpdatedPatientApprovalApproved() throws JSONException, InterruptedException {
+    public void verifyMultiplePatientUpdateWithSameFieldUsingPatientApprovalAcceptProcess() throws JSONException, InterruptedException {
 
         primaryPatient= dataStore.defaultPatient;
 
@@ -229,7 +228,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
     @Category(ApiTest.class)
     @Test
-    public void verifyNewlyPatientBlockDataApproved() throws JSONException, InterruptedException {
+    public void verifyPhoneBlockDataUpdateUsingPatientApprovalAcceptProcess() throws JSONException, InterruptedException {
 
         primaryPatient= dataStore.defaultPatient;
 
@@ -275,9 +274,8 @@ public class UpdatePatientTests extends PatientDataSetUp {
     }
 
     @Category(ApiTest.class)
-    @Ignore
-    @Test
-    public void verifyNewlyPatientBlockDataRejected() throws JSONException, InterruptedException {
+    @Test(expected = JSONException.class)
+    public void verifyPhoneBlockDataUpdateUsingPatientApprovalRejectProcess() throws JSONException, InterruptedException {
 
         primaryPatient= dataStore.defaultPatient;
 
@@ -289,7 +287,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients/{hid}")
                 .andReturn().body().print();
-
+        System.out.println("beforeUpdate:" + beforeUpdate);
         System.out.println(hid);
         String number = String.valueOf(System.currentTimeMillis()).substring(7);
         updatedValue.put("country_code", "88");
@@ -297,11 +295,8 @@ public class UpdatePatientTests extends PatientDataSetUp {
         updatedValue.put("number", number);
         updatedValue.put("extension", "3245");
         AddNewValue.put("phone_number", updatedValue);
-        System.out.println(AddNewValue);
 
         updatePatient(AddNewValue, hid);
-
-
         given().contentType("application/json")
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .pathParam("hid", hid)
@@ -309,21 +304,14 @@ public class UpdatePatientTests extends PatientDataSetUp {
                 .when().delete(ApprovalURL)
                 .then().assertThat().statusCode(202);
 
-        System.out.println("Patient detail is rejected for updation");
 
         String afterUpdateRejected=given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients/{hid}")
                 .andReturn().body().print();
+        JSONObject updatedPatient = new JSONObject(afterUpdateRejected);
+        updatedPatient.get("phone_number");
 
-        System.out.println(beforeUpdate.equals(afterUpdateRejected));
-        System.out.println(beforeUpdate);
-        System.out.println(afterUpdateRejected);
-        Assert.assertTrue(beforeUpdate.equals(afterUpdateRejected));
-
-        System.out.println("Verify that patient new block data is not approved");
-        System.out.println(beforeUpdate);
-        System.out.println(afterUpdateRejected);
     }
 
     @Category(ApiTest.class)
@@ -354,7 +342,6 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
     }
     @Category(ApiTest.class)
-    @Ignore
     @Test
     public void verifySearchAfterBlockUpdateByPhoneNo() throws JSONException, InterruptedException {
 
@@ -371,10 +358,18 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
         updatePatient(AddNewValue, hid);
 
+        given().contentType("application/json")
+                .pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .body(AddNewValue.toString())
+                .when().put(ApprovalURL)
+                .then().assertThat().statusCode(202);
+
         given().pathParam("phoneNumber", updatedValue.get("number"))
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients?phone_no={phoneNumber}")
                 .print();
+
         given().pathParam("phoneNumber", updatedValue.get("number"))
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients?phone_no={phoneNumber}")
