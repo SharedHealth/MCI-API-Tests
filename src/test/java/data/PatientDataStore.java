@@ -19,24 +19,4 @@ public class PatientDataStore {
             .address(address.defaultAddress)
             .build();
 
-    public Patient barisalPatient = new Patient()
-            .withNid("9000000" + id1)
-            .withBinBRN("90000001234" + id1)
-            .withGiven_name("A" + id1)
-            .withSur_name("ATEST")
-            .withDateOfBirth("2000-03-01")
-            .withGender("M")
-            .address(address.getAddressForBarisal)
-            .build();
-
-    public Patient dhakaPatient = new Patient()
-            .withNid("9000000" + id1)
-            .withBinBRN("90000001234" + id1)
-            .withGiven_name("A" + id1)
-            .withSur_name("ATEST")
-            .withDateOfBirth("2000-03-01")
-            .withGender("M")
-            .address(address.getAddressForDhaka)
-            .build();
-
 }

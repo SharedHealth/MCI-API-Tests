@@ -13,6 +13,7 @@ import utils.WebDriverProperties;
 import static com.jayway.restassured.RestAssured.basic;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.config.EncoderConfig.encoderConfig;
+import static utils.FileUtil.asString;
 
 /**
  * Created by ashutosh on 24/12/14.
@@ -78,6 +79,33 @@ public class PatientDataSetUp {
                 .when().put("/patients/{hid}")
                 .then().assertThat().statusCode(202);
     }
+
+    protected String createPatientWithFullPayLoad() throws JSONException {
+
+        String json = asString("jsons/patient/full_payload.json");
+
+        Response response = given().contentType("application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .body(json)
+                .when().post("/patients")
+                .andReturn();
+
+        JSONObject jsonObject = new JSONObject(response.getBody().asString());
+
+        return jsonObject.get("id").toString();
+    }
+
+    protected void updatePatientByJsonData(String hid, String json) throws JSONException {
+
+        given().contentType("Application/json")
+                .pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
+                .body(json)
+                .when().put("/patients/{hid}")
+                .then().assertThat().statusCode(202);
+    }
+
+
 
     @After
     public void tearDown() {

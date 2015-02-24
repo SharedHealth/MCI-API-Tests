@@ -7,7 +7,6 @@ import domain.Patient;
 import org.hamcrest.Matchers;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import utils.WebDriverProperties;
@@ -93,5 +92,99 @@ public class SearchPatientTests extends PatientDataSetUp {
 
     }
 
+    @Test
+    public void verifySearchUsingNationalID() throws Exception {
 
+        createPatientWithFullPayLoad();
+
+        given().pathParam("nid", "1234567890123")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .when().get("/patients?nid={nid}")
+                .then()
+                .body("results.given_name[0]", Matchers.equalTo("Zaman"))
+                .body("results.phone_number.number[0]", Matchers.equalTo("9678909"));
+
+    }
+
+    @Test
+    public void verifySearchUsingBirthRegistrationNumber() throws Exception {
+
+        createPatientWithFullPayLoad();
+
+        given().pathParam("bin_brn", "12345678901234567")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .when().get("/patients?bin_brn={bin_brn}")
+                .then()
+                .body("results.given_name[0]", Matchers.equalTo("Zaman"))
+                .body("results.phone_number.number[0]", Matchers.equalTo("9678909"));
+
+    }
+
+    @Test
+    public void verifySearchUsingUserId() throws Exception {
+
+        createPatientWithFullPayLoad();
+
+        given().pathParam("uid", "11111111111")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .when().get("/patients?uid={uid}")
+                .then()
+                .body("results.given_name[0]", Matchers.equalTo("Zaman"))
+                .body("results.phone_number.number[0]", Matchers.equalTo("9678909"));
+
+    }
+
+    @Test
+    public void verifySearchUsingPresentAddressAndGivenName() throws Exception {
+
+        createPatientWithFullPayLoad();
+
+        given().pathParam("present_address", "557364")
+                .pathParam("given_name", "Zaman")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .when().get("/patients?present_address={present_address}&given_name={given_name}")
+                .then()
+                .body("results.present_address.division_id[0]", Matchers.equalTo("55"))
+                .body("results.present_address.district_id[0]", Matchers.equalTo("73"))
+                .body("results.present_address.upazila_id[0]", Matchers.equalTo("64"))
+                .body("results.given_name[0]", Matchers.equalTo("Zaman"))
+                .body("results.phone_number.number[0]", Matchers.equalTo("9678909"));
+
+    }
+
+    @Test
+    public void verifySearchUsingPresentAddressAndGivenNameAndSurName() throws Exception {
+
+        createPatientWithFullPayLoad();
+
+        given().pathParam("present_address", "557364")
+                .pathParam("given_name", "Zaman")
+                .pathParam("sur_name", "Aymaan")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .when().get("/patients?present_address={present_address}&given_name={given_name}&sur_name={sur_name}")
+                .then()
+                .body("results.present_address.division_id[0]", Matchers.equalTo("55"))
+                .body("results.present_address.district_id[0]", Matchers.equalTo("73"))
+                .body("results.present_address.upazila_id[0]", Matchers.equalTo("64"))
+                .body("results.given_name[0]", Matchers.equalTo("Zaman"))
+                .body("results.phone_number.number[0]", Matchers.equalTo("9678909"));
+
+    }
+
+    @Test
+    public void verifySearchUsingPhoneNo() throws Exception {
+
+        createPatientWithFullPayLoad();
+
+        given().pathParam("phone_no", "557364")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .when().get("/patients?phone_no={phone_no}")
+                .then()
+                .body("results.present_address.division_id[0]", Matchers.equalTo("55"))
+                .body("results.present_address.district_id[0]", Matchers.equalTo("73"))
+                .body("results.present_address.upazila_id[0]", Matchers.equalTo("64"))
+                .body("results.given_name[0]", Matchers.equalTo("Zaman"))
+                .body("results.phone_number.number[0]", Matchers.equalTo("9678909"));
+
+    }
 }
