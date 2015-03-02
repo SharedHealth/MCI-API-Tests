@@ -1,117 +1,365 @@
 package domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.List;
+import java.util.UUID;
 
 public class Patient {
-    private String given_name;
-    private String sur_name;
-    private String gender;
+
+    @JsonProperty("hid")
+    private String healthId;
+
+    @JsonProperty("nid")
+    private String nationalId;
+
+    @JsonProperty("bin_brn")
+    private String birthRegistrationNumber;
+
+    @JsonProperty("name_bangla")
+    private String nameBangla;
+
+    @JsonProperty("given_name")
+    private String givenName;
+
+    @JsonProperty("sur_name")
+    private String surName;
+
+    @JsonProperty("date_of_birth")
     private String dateOfBirth;
-    private Address address;
-    private String nid;
-    private String hid;
-    private String education;
+
+    private String gender;
     private String occupation;
-    private String primaryContact;
+
+    @JsonProperty("edu_level")
+    private String educationLevel;
+
+    private List<Relation> relations;
+
     private String uid;
-    private String fatherUid;
-    private String fatherNid;
-    private String fatherBRN;
-    private String motherUid;
-    private String motherNid;
-    private String motherBRN;
-    private String binBRN;
 
-    public Patient withGiven_name(String given_name) {
-        this.given_name = given_name;
-        return this;
+    @JsonProperty("place_of_birth")
+    private String placeOfBirth;
+
+    private String religion;
+
+    @JsonProperty("blood_group")
+    private String bloodGroup;
+
+    private String nationality;
+
+    private String disability;
+
+    private String ethnicity;
+
+    @JsonProperty("present_address")
+    private Address address;
+
+    @JsonProperty("primary_contact")
+    private String primaryContact;
+
+    @JsonProperty("phone_number")
+    private PhoneNumber phoneNumber;
+
+    @JsonProperty("primary_contact_number")
+    private PhoneNumber primaryContactNumber;
+
+    @JsonProperty("permanent_address")
+    private Address permanentAddress;
+
+    @JsonProperty("marital_status")
+    private String maritalStatus;
+
+    private String status;
+    private String confidential;
+
+    @JsonProperty("household_code")
+    private String householdCode;
+
+    @JsonProperty("date_of_death")
+    private String dateOfDeath;
+
+    @JsonProperty("created_at")
+    private UUID createdAt;
+
+    @JsonProperty("updated_at")
+    @JsonIgnore
+    private UUID updatedAt;
+
+    public String getHealthId() {
+        return healthId;
     }
 
-    public Patient withSur_name(String sur_name) {
-        this.sur_name = sur_name;
-        return this;
+    public void setHealthId(String healthId) {
+        this.healthId = healthId;
     }
 
-    public Patient withDateOfBirth(String dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-        return this;
+    public String getNationalId() {
+        return nationalId;
     }
 
-    public Patient withNid(String nid) {
-        this.nid = nid;
-        return this;
+    public void setNationalId(String nationalId) {
+        this.nationalId = nationalId;
     }
 
-    public Patient withBinBRN(String binBRN) {
-        this.binBRN = binBRN;
-        return this;
+    public String getBirthRegistrationNumber() {
+        return birthRegistrationNumber;
     }
 
-    public Patient withGender(String gender) {
-        this.gender = gender;
-        return this;
+    public void setBirthRegistrationNumber(String birthRegistrationNumber) {
+        this.birthRegistrationNumber = birthRegistrationNumber;
     }
 
-    public Patient address(Address address) {
-        this.address = address;
-        return this;
+    public String getNameBangla() {
+        return nameBangla;
     }
-    public String getGiven_name() {
-        return given_name;
+
+    public void setNameBangla(String nameBangla) {
+        this.nameBangla = nameBangla;
     }
-    public String getSur_name() {
-        return sur_name;
+
+    public String getGivenName() {
+        return givenName;
     }
-    public String getGender() {
-        return gender;
+
+    public void setGivenName(String givenName) {
+        this.givenName = givenName;
     }
+
+    public String getSurName() {
+        return surName;
+    }
+
+    public void setSurName(String surName) {
+        this.surName = surName;
+    }
+
     public String getDateOfBirth() {
         return dateOfBirth;
     }
-    public Address getAddress() {
-        return address;
+
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
-    public String getNid() {
-        return nid;
+
+    public String getGender() {
+        return gender;
     }
-    public String getHid() {
-        return hid;
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
-    public String getEducation() {
-        return education;
-    }
+
     public String getOccupation() {
         return occupation;
     }
-    public String getPrimaryContact() {
-        return primaryContact;
+
+    public void setOccupation(String occupation) {
+        this.occupation = occupation;
     }
+
+    public String getEducationLevel() {
+        return educationLevel;
+    }
+
+    public void setEducationLevel(String educationLevel) {
+        this.educationLevel = educationLevel;
+    }
+
+    public List<Relation> getRelations() {
+        return relations;
+    }
+
+    public void setRelations(List<Relation> relations) {
+        this.relations = relations;
+    }
+
     public String getUid() {
         return uid;
     }
-    public String getFatherUid() {
-        return fatherUid;
-    }
-    public String getFatherNid() {
-        return fatherNid;
-    }
-    public String getFatherBRN() {
-        return fatherBRN;
-    }
-    public String getMotherUid() {
-        return motherUid;
-    }
-    public String getMotherNid() {
-        return motherNid;
-    }
-    public String getMotherBRN() {
-        return motherBRN;
-    }
-    public String getBinBRN() {
-        return binBRN;
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
-    public Patient build() {
-            return  this;
-        }
+    public String getPlaceOfBirth() {
+        return placeOfBirth;
     }
+
+    public void setPlaceOfBirth(String placeOfBirth) {
+        this.placeOfBirth = placeOfBirth;
+    }
+
+    public String getReligion() {
+        return religion;
+    }
+
+    public void setReligion(String religion) {
+        this.religion = religion;
+    }
+
+    public String getBloodGroup() {
+        return bloodGroup;
+    }
+
+    public void setBloodGroup(String bloodGroup) {
+        this.bloodGroup = bloodGroup;
+    }
+
+    public String getNationality() {
+        return nationality;
+    }
+
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
+    }
+
+    public String getDisability() {
+        return disability;
+    }
+
+    public void setDisability(String disability) {
+        this.disability = disability;
+    }
+
+    public String getEthnicity() {
+        return ethnicity;
+    }
+
+    public void setEthnicity(String ethnicity) {
+        this.ethnicity = ethnicity;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public String getPrimaryContact() {
+        return primaryContact;
+    }
+
+    public void setPrimaryContact(String primaryContact) {
+        this.primaryContact = primaryContact;
+    }
+
+    public PhoneNumber getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(PhoneNumber phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public PhoneNumber getPrimaryContactNumber() {
+        return primaryContactNumber;
+    }
+
+    public void setPrimaryContactNumber(PhoneNumber primaryContactNumber) {
+        this.primaryContactNumber = primaryContactNumber;
+    }
+
+    public Address getPermanentAddress() {
+        return permanentAddress;
+    }
+
+    public void setPermanentAddress(Address permanentAddress) {
+        this.permanentAddress = permanentAddress;
+    }
+
+    public String getMaritalStatus() {
+        return maritalStatus;
+    }
+
+    public void setMaritalStatus(String maritalStatus) {
+        this.maritalStatus = maritalStatus;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getConfidential() {
+        return confidential;
+    }
+
+    public void setConfidential(String confidential) {
+        this.confidential = confidential;
+    }
+
+    public String getHouseholdCode() {
+        return householdCode;
+    }
+
+    public void setHouseholdCode(String householdCode) {
+        this.householdCode = householdCode;
+    }
+
+    public String getDateOfDeath() {
+        return dateOfDeath;
+    }
+
+    public void setDateOfDeath(String dateOfDeath) {
+        this.dateOfDeath = dateOfDeath;
+    }
+
+    public UUID getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(UUID createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public UUID getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(UUID updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public String toString() {
+        return "PatientData{" +
+                "healthId='" + healthId + '\'' +
+                ", nationalId='" + nationalId + '\'' +
+                ", birthRegistrationNumber='" + birthRegistrationNumber + '\'' +
+                ", nameBangla='" + nameBangla + '\'' +
+                ", givenName='" + givenName + '\'' +
+                ", surName='" + surName + '\'' +
+                ", dateOfBirth='" + dateOfBirth + '\'' +
+                ", gender='" + gender + '\'' +
+                ", occupation='" + occupation + '\'' +
+                ", educationLevel='" + educationLevel + '\'' +
+                ", relations=" + relations +
+                ", uid='" + uid + '\'' +
+                ", placeOfBirth='" + placeOfBirth + '\'' +
+                ", religion='" + religion + '\'' +
+                ", bloodGroup='" + bloodGroup + '\'' +
+                ", nationality='" + nationality + '\'' +
+                ", disability='" + disability + '\'' +
+                ", ethnicity='" + ethnicity + '\'' +
+                ", address=" + address +
+                ", primaryContact='" + primaryContact + '\'' +
+                ", phoneNumber=" + phoneNumber +
+                ", primaryContactNumber=" + primaryContactNumber +
+                ", permanentAddress=" + permanentAddress +
+                ", maritalStatus='" + maritalStatus + '\'' +
+                ", status='" + status + '\'' +
+                ", dateOfDeath='" + dateOfDeath + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                ", updatedAt='" + updatedAt + '\'' +
+                ", householdCode='" + householdCode + '\'' +
+                '}';
+    }
+}
 

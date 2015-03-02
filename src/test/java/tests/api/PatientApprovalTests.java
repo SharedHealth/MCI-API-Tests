@@ -2,7 +2,6 @@ package tests.api;
 
 import categories.ApiTest;
 import data.PatientDataSetUp;
-import data.PatientDataStore;
 import domain.Patient;
 import org.hamcrest.Matchers;
 import org.json.JSONException;
@@ -12,29 +11,27 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import utils.WebDriverProperties;
 
-
 import static com.jayway.restassured.RestAssured.given;
+import static utils.FileUtil.asString;
 
 
 public class PatientApprovalTests extends PatientDataSetUp {
 
-    String ApprovalURL="/catchments/100409/approvals/{hid}/";
-    protected Patient primaryPatient;
-    PatientDataStore dataStore = new PatientDataStore();
-    JSONObject updatedValue= new JSONObject();
-    JSONObject AddNewValue= new JSONObject();
+    String ApprovalURL = "/catchments/557364/approvals/{hid}/";
+    JSONObject updatedValue = new JSONObject();
+    JSONObject AddNewValue = new JSONObject();
 
     @Category(ApiTest.class)
     @Test
-    public void verifyGivenNameUpdateUsingPatientApprovalAcceptProcess() throws JSONException, InterruptedException {
+    public void verifyGivenNameUpdateUsingPatientApprovalAcceptProcess() throws Exception {
 
-        primaryPatient= dataStore.defaultPatient;
+        String json = asString("jsons/patient/full_payload_without_ids.json");
+        String hid = createPatient(json);
 
-        JSONObject patient = createPatientDataJsonToPost(primaryPatient);
-        String hid = createPatient(patient);
         updatedValue.put("given_name", "updated");
-        updatePatient(updatedValue, hid);
-
+        updatePatient(updatedValue.toString(), hid);
+        System.out.println("hid:" + hid);
+        System.out.println(updatedValue.toString());
         given().contentType("Application/json")
                 .pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
@@ -43,7 +40,7 @@ public class PatientApprovalTests extends PatientDataSetUp {
                 .then().assertThat().statusCode(202);
 
         given().pathParam("hid", hid)
-                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients/{hid}")
                 .then()
                 .body("given_name", Matchers.equalTo(updatedValue.get("given_name")));
@@ -52,14 +49,14 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
     @Category(ApiTest.class)
     @Test
-    public void verifyGivenNameUpdateUsingPatientApprovalRejectProcess() throws JSONException, InterruptedException {
+    public void verifyGivenNameUpdateUsingPatientApprovalRejectProcess() throws Exception {
 
-        primaryPatient= dataStore.defaultPatient;
+        String json = asString("jsons/patient/full_payload_without_ids.json");
+        String hid = createPatient(json);
+        Patient patient = getPatientObjectFromString(json);
 
-        JSONObject patient = createPatientDataJsonToPost(primaryPatient);
-        String hid = createPatient(patient);
         updatedValue.put("given_name", "updated");
-        updatePatient(updatedValue, hid);
+        updatePatient(updatedValue.toString(), hid);
 
         given().contentType("Application/json")
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
@@ -72,21 +69,20 @@ public class PatientApprovalTests extends PatientDataSetUp {
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients/{hid}")
                 .then()
-                .body("given_name", Matchers.equalTo(primaryPatient.getGiven_name()));
+                .body("given_name", Matchers.equalTo(patient.getGivenName()));
 
     }
 
     @Category(ApiTest.class)
     @Test
-    public void verifyOccupationUpdateUsingPatientApprovalAcceptProcess() throws JSONException, InterruptedException {
+    public void verifyOccupationUpdateUsingPatientApprovalAcceptProcess() throws Exception {
 
-        primaryPatient= dataStore.defaultPatient;
-
-        JSONObject patient = createPatientDataJsonToPost(primaryPatient);
-        String hid = createPatient(patient);
+        String json = asString("jsons/patient/full_payload_without_ids.json");
+        String hid = createPatient(json);
+        Patient patient = getPatientObjectFromString(json);
 
         AddNewValue.put("occupation", "02");
-        updatePatient(AddNewValue, hid);
+        updatePatient(AddNewValue.toString(), hid);
 
         given().contentType("application/json")
                 .pathParam("hid", hid)
@@ -107,15 +103,14 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
     @Category(ApiTest.class)
     @Test
-    public void verifyOccupationUpdateUsingPatientApprovalRejectProcess() throws JSONException, InterruptedException {
+    public void verifyOccupationUpdateUsingPatientApprovalRejectProcess() throws Exception {
 
-        primaryPatient= dataStore.defaultPatient;
-
-        JSONObject patient = createPatientDataJsonToPost(primaryPatient);
-        String hid = createPatient(patient);
+        String json = asString("jsons/patient/full_payload_without_ids.json");
+        String hid = createPatient(json);
+        Patient patient = getPatientObjectFromString(json);
 
         AddNewValue.put("occupation", "02");
-        updatePatient(AddNewValue, hid);
+        updatePatient(AddNewValue.toString(), hid);
 
 
         given().contentType("Application/json")
@@ -137,16 +132,15 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
     @Category(ApiTest.class)
     @Test
-    public void verifyMultipleFieldUpdateUsingPatientApprovalAcceptProcess() throws JSONException, InterruptedException {
+    public void verifyMultipleFieldUpdateUsingPatientApprovalAcceptProcess() throws Exception {
 
-        primaryPatient= dataStore.defaultPatient;
-
-        JSONObject patient = createPatientDataJsonToPost(primaryPatient);
-        String hid = createPatient(patient);
+        String json = asString("jsons/patient/full_payload_without_ids.json");
+        String hid = createPatient(json);
+        Patient patient = getPatientObjectFromString(json);
 
         updatedValue.put("given_name", "updated");
         updatedValue.put("gender", "O");
-        updatePatient(updatedValue, hid);
+        updatePatient(updatedValue.toString(), hid);
 
         given().contentType("application/json")
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
@@ -167,16 +161,15 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
     @Category(ApiTest.class)
     @Test
-    public void verifyMultipleFieldUpdateUsingPatientApprovalRejectProcess() throws JSONException, InterruptedException {
+    public void verifyMultipleFieldUpdateUsingPatientApprovalRejectProcess() throws Exception {
 
-        primaryPatient= dataStore.defaultPatient;
-
-        JSONObject patient = createPatientDataJsonToPost(primaryPatient);
-        String hid = createPatient(patient);
+        String json = asString("jsons/patient/full_payload_without_ids.json");
+        String hid = createPatient(json);
+        Patient patient = getPatientObjectFromString(json);
 
         updatedValue.put("given_name", "updated");
         updatedValue.put("gender", "O");
-        updatePatient(updatedValue, hid);
+        updatePatient(updatedValue.toString(), hid);
 
         given().contentType("Application/json")
                 .pathParam("hid", hid)
@@ -189,8 +182,8 @@ public class PatientApprovalTests extends PatientDataSetUp {
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients/{hid}")
                 .then()
-                .body("given_name", Matchers.equalTo(primaryPatient.getGiven_name()))
-                .body("gender", Matchers.equalTo(primaryPatient.getGender()));
+                .body("given_name", Matchers.equalTo(patient.getGivenName()))
+                .body("gender", Matchers.equalTo(patient.getGender()));
 
 
         System.out.println("Verify that patient data is rejected");
@@ -198,16 +191,15 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
     @Category(ApiTest.class)
     @Test
-    public void verifyMultiplePatientUpdateWithSameFieldUsingPatientApprovalAcceptProcess() throws JSONException, InterruptedException {
+    public void verifyMultiplePatientUpdateWithSameFieldUsingPatientApprovalAcceptProcess() throws Exception {
 
-        primaryPatient= dataStore.defaultPatient;
+        String json = asString("jsons/patient/full_payload_without_ids.json");
+        String hid = createPatient(json);
+        Patient patient = getPatientObjectFromString(json);
 
-        JSONObject patient = createPatientDataJsonToPost(primaryPatient);
-        String hid = createPatient(patient);
-
-        for(int i=1; i<=3; i++) {
-            updatedValue.put("given_name", "Firstupdated"+i);
-            updatePatient(updatedValue, hid);
+        for (int i = 1; i <= 3; i++) {
+            updatedValue.put("given_name", "Firstupdated" + i);
+            updatePatient(updatedValue.toString(), hid);
         }
 
         given().contentType("Application/json")
@@ -228,14 +220,13 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
     @Category(ApiTest.class)
     @Test
-    public void verifyPhoneBlockDataUpdateUsingPatientApprovalAcceptProcess() throws JSONException, InterruptedException {
+    public void verifyPhoneBlockDataUpdateUsingPatientApprovalAcceptProcess() throws Exception {
 
-        primaryPatient= dataStore.defaultPatient;
+        String json = asString("jsons/patient/full_payload_without_ids.json");
+        String hid = createPatient(json);
+        Patient patient = getPatientObjectFromString(json);
 
-        JSONObject patient = createPatientDataJsonToPost(primaryPatient);
-        String hid = createPatient(patient);
-
-        String beforeUpdate=given().pathParam("hid", hid)
+        String beforeUpdate = given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients/{hid}")
                 .andReturn().body().print();
@@ -247,7 +238,7 @@ public class PatientApprovalTests extends PatientDataSetUp {
         updatedValue.put("extension", "3245");
         AddNewValue.put("phone_number", updatedValue);
 
-        updatePatient(AddNewValue, hid);
+        updatePatient(AddNewValue.toString(), hid);
         given().contentType("application/json")
                 .pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
@@ -256,7 +247,7 @@ public class PatientApprovalTests extends PatientDataSetUp {
                 .then().assertThat().statusCode(202);
 
 
-        String afterUpdateApproved=given().pathParam("hid", hid)
+        String afterUpdateApproved = given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients/{hid}")
                 .andReturn().body().print();
@@ -275,15 +266,13 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
     @Category(ApiTest.class)
     @Test(expected = JSONException.class)
-    public void verifyPhoneBlockDataUpdateUsingPatientApprovalRejectProcess() throws JSONException, InterruptedException {
+    public void verifyPhoneBlockDataUpdateUsingPatientApprovalRejectProcess() throws Exception {
 
-        primaryPatient= dataStore.defaultPatient;
+        String json = asString("jsons/patient/full_payload_without_ids.json");
+        String hid = createPatient(json);
+        Patient patient = getPatientObjectFromString(json);
 
-
-        JSONObject patient = createPatientDataJsonToPost(primaryPatient);
-        String hid = createPatient(patient);
-
-        String beforeUpdate=given().pathParam("hid", hid)
+        String beforeUpdate = given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients/{hid}")
                 .andReturn().body().print();
@@ -296,7 +285,7 @@ public class PatientApprovalTests extends PatientDataSetUp {
         updatedValue.put("extension", "3245");
         AddNewValue.put("phone_number", updatedValue);
 
-        updatePatient(AddNewValue, hid);
+        updatePatient(AddNewValue.toString(), hid);
         given().contentType("application/json")
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .pathParam("hid", hid)
@@ -305,7 +294,7 @@ public class PatientApprovalTests extends PatientDataSetUp {
                 .then().assertThat().statusCode(202);
 
 
-        String afterUpdateRejected=given().pathParam("hid", hid)
+        String afterUpdateRejected = given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients/{hid}")
                 .andReturn().body().print();
@@ -316,38 +305,37 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
     @Category(ApiTest.class)
     @Test
-    public void verifySearchAfterUpdatedPatientDataWithNameAddress() throws JSONException, InterruptedException {
+    public void verifySearchAfterUpdatedPatientDataWithNameAddress() throws Exception {
 
-        primaryPatient= dataStore.defaultPatient;
-
-
-        JSONObject patient = createPatientDataJsonToPost(primaryPatient);
-        String hid = createPatient(patient);
+        String json = asString("jsons/patient/full_payload_without_ids.json");
+        String hid = createPatient(json);
+        Patient patient = getPatientObjectFromString(json);
 
         updatedValue.put("given_name", "updated");
-        updatePatient(updatedValue, hid);
+        updatePatient(updatedValue.toString(), hid);
 
         given().pathParam("name", updatedValue.get("given_name"))
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients?given_name={name}&present_address=100409")
                 .then()
-                .body("results.given_name[0]", Matchers.equalTo(updatedValue.get("given_name")))
-                .body("results.present_address.address_line[0]", Matchers.equalTo("Test1"))
-                .body("results.present_address.division_id[0]", Matchers.equalTo("10"))
-                .body("results.present_address.district_id[0]", Matchers.equalTo("04"))
-                .body("results.present_address.upazila_id[0]", Matchers.equalTo("09"));
+                .body("results.given_name", Matchers.equalTo(updatedValue.get("given_name")))
+                .body("results.present_address.address_line", Matchers.equalTo(patient.getAddress().getAddressLine()))
+                .body("results.present_address.division_id", Matchers.equalTo(patient.getAddress().getDivisionId()))
+                .body("results.present_address.district_id", Matchers.equalTo(patient.getAddress().getDistrictId()))
+                .body("results.present_address.upazila_id", Matchers.equalTo(patient.getAddress().getUpazilaId()));
 
         System.out.println("Verify that patient is searched with name & location");
 
 
     }
+
     @Category(ApiTest.class)
     @Test
-    public void verifySearchAfterBlockUpdateByPhoneNo() throws JSONException, InterruptedException {
+    public void verifySearchAfterBlockUpdateByPhoneNo() throws Exception {
 
-        primaryPatient= dataStore.defaultPatient;
-        JSONObject patient = createPatientDataJsonToPost(primaryPatient);
-        String hid = createPatient(patient);
+        String json = asString("jsons/patient/full_payload_without_ids.json");
+        String hid = createPatient(json);
+        Patient patient = getPatientObjectFromString(json);
 
         String number = String.valueOf(System.currentTimeMillis()).substring(7);
         updatedValue.put("country_code", "88");
@@ -356,7 +344,7 @@ public class PatientApprovalTests extends PatientDataSetUp {
         updatedValue.put("extension", "3245");
         AddNewValue.put("phone_number", updatedValue);
 
-        updatePatient(AddNewValue, hid);
+        updatePatient(AddNewValue.toString(), hid);
 
         given().contentType("application/json")
                 .pathParam("hid", hid)
@@ -374,12 +362,12 @@ public class PatientApprovalTests extends PatientDataSetUp {
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients?phone_no={phoneNumber}")
                 .then()
-                .body("results.given_name[0]", Matchers.equalTo(primaryPatient.getGiven_name()))
-                .body("results.present_address.address_line[0]", Matchers.equalTo("Test1"))
-                .body("results.present_address.division_id[0]", Matchers.equalTo("10"))
-                .body("results.present_address.district_id[0]", Matchers.equalTo("04"))
-                .body("results.present_address.upazila_id[0]", Matchers.equalTo("09"))
-                .body("results.phone_number.number[0]", Matchers.equalTo(updatedValue.get("number")));
+                .body("results.given_name[0]", Matchers.equalTo(patient.getGivenName()))
+                .body("results.present_address.address_line", Matchers.equalTo(patient.getAddress().getAddressLine()))
+                .body("results.present_address.division_id", Matchers.equalTo(patient.getAddress().getDivisionId()))
+                .body("results.present_address.district_id", Matchers.equalTo(patient.getAddress().getDistrictId()))
+                .body("results.present_address.upazila_id", Matchers.equalTo(patient.getAddress().getUpazilaId()))
+                .body("results.phone_number.number", Matchers.equalTo(updatedValue.get("number")));
 
         System.out.println("Verify that patient is searched with phone_no");
 

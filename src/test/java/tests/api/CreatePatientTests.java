@@ -1,124 +1,62 @@
 package tests.api;
 
 import categories.ApiTest;
-import com.jayway.restassured.response.ValidatableResponse;
 import data.PatientDataSetUp;
-import data.PatientDataStore;
 import domain.Patient;
 import org.hamcrest.Matchers;
-import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import utils.WebDriverProperties;
 
 import static com.jayway.restassured.RestAssured.given;
+import static utils.FileUtil.asString;
 
 public class CreatePatientTests extends PatientDataSetUp {
 
-    protected Patient primaryPatient;
-    PatientDataStore dataStore = new PatientDataStore();
-
-
     @Category(ApiTest.class)
     @Test
-    public void verifyCreatePatient() {
+    public void verifyCreatePatient() throws Exception {
 
-        primaryPatient = dataStore.defaultPatient;
+        String json = asString("jsons/patient/full_payload_without_ids.json");
+        String hid = createPatient(json);
+        Patient patient = getPatientObjectFromString(json);
 
-        JSONObject person = createPatientDataJsonToPost(primaryPatient);
-        given().contentType("application/json").header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
-                .body(person.toString())
-                .when().post("/patients")
-                .then().assertThat().statusCode(201);
-        System.out.println("Patient with NID " + primaryPatient.getNid() + " created in MCI ");
-
-        given().pathParam("nid", primaryPatient.getNid())
-                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
-                .when().get("/patients?nid={nid}")
+        given().header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .when().get("/patients/" + hid)
                 .then()
-                .body("results.hid[0]", Matchers.notNullValue())
-                .body("results.nid[0]", Matchers.equalTo(primaryPatient.getNid()))
-                .body("results.given_name[0]", Matchers.equalTo(primaryPatient.getGiven_name()))
-                .body("results.sur_name[0]", Matchers.equalTo(primaryPatient.getSur_name()))
-                .body("results.date_of_birth[0]", Matchers.equalTo(primaryPatient.getDateOfBirth()))
-                .body("results.gender[0]", Matchers.equalTo(primaryPatient.getGender()))
-                .body("results.present_address.address_line[0]", Matchers.equalTo("Test1"))
-                .body("results.present_address.division_id[0]", Matchers.equalTo("10"))
-                .body("results.present_address.district_id[0]", Matchers.equalTo("04"))
-                .body("results.present_address.upazila_id[0]", Matchers.equalTo("09"))
-                .body("results.present_address.city_corporation_id[0]", Matchers.equalTo("99"))
-                .body("results.present_address.union_or_urban_ward_id[0]", Matchers.equalTo("13"));
+                .body("hid", Matchers.notNullValue())
+                .body("given_name", Matchers.equalTo(patient.getGivenName()))
+                .body("sur_name", Matchers.equalTo(patient.getSurName()))
+                .body("date_of_birth", Matchers.equalTo(patient.getDateOfBirth()))
+                .body("gender", Matchers.equalTo(patient.getGender()))
+                .body("present_address.address_line", Matchers.equalTo(patient.getAddress().getAddressLine()))
+                .body("present_address.division_id", Matchers.equalTo(patient.getAddress().getDivisionId()))
+                .body("present_address.district_id", Matchers.equalTo(patient.getAddress().getDistrictId()))
+                .body("present_address.upazila_id", Matchers.equalTo(patient.getAddress().getUpazilaId()))
+                .body("present_address.city_corporation_id", Matchers.equalTo(patient.getAddress().getCityCorporationId()))
+                .body("present_address.union_or_urban_ward_id", Matchers.equalTo(patient.getAddress().getUnionOrUrbanWardId()));
 
-        System.out.println("Patient with NID " + primaryPatient.getNid() + " verified in MCI");
     }
 
 
-
-
     @Category(ApiTest.class)
     @Test
-    public void verifyCreatePatientErrorForInvalidNID() {
+    public void verifyCreatePatientErrorForInvalidNID() throws Exception {
 
-        primaryPatient = dataStore.defaultPatient.withNid("invalid").build();
+        String json = asString("jsons/patient/full_payload_without_ids.json");
+        Patient patient = getPatientObjectFromString(json);
+        patient.setNationalId("invalid");
+        String updatedJson = getJsonFromObject(patient);
 
-        JSONObject person = createPatientDataJsonToPost(primaryPatient);
-        ValidatableResponse body = given().contentType("application/json")
-                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
-                .body(person.toString())
+        given().contentType("application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .body(updatedJson)
                 .when().post("/patients")
                 .then()
                 .assertThat().statusCode(400)
                 .body("error_code", Matchers.equalTo(1000))
-                .body("errors.code[0]", Matchers.equalTo(1002))
-                .body("errors.field[0]", Matchers.equalTo("nid"));
-        System.out.println("Patient with NID " + primaryPatient.getNid() + " is not available in MCI");
+                .body("errors[0].code", Matchers.equalTo(1002))
+                .body("errors[0].field", Matchers.equalTo("nid"));
     }
-
-
-    @Category(ApiTest.class)
-    @Test
-
-    public void verifyCreatePatientWithBRNID(){
-
-        primaryPatient= dataStore.defaultPatient;
-
-        JSONObject person = createPatientDataJsonToPost(primaryPatient);
-        person.remove("nid");
-        given().contentType("application/json")
-                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
-                .body(person.toString())
-                .when().post("/patients")
-                .then().assertThat().statusCode(201);
-
-        System.out.println("Patient with BRN " + primaryPatient.getBinBRN() + " created in MCI ");
-
-        System.out.println(person.toString());
-        given().pathParam("bin_brn", primaryPatient.getBinBRN())
-                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
-                .when().get("/patients?bin_brn={bin_brn}")
-                .then()
-
-                .body("results.hid[0]", Matchers.notNullValue())
-                .body("results.bin_brn[0]", Matchers.equalTo(primaryPatient.getBinBRN()))
-                .body("results.given_name[0]", Matchers.equalTo(primaryPatient.getGiven_name()))
-                .body("results.sur_name[0]", Matchers.equalTo(primaryPatient.getSur_name()))
-                .body("results.date_of_birth[0]", Matchers.equalTo(primaryPatient.getDateOfBirth()))
-                .body("results.gender[0]", Matchers.equalTo(primaryPatient.getGender()))
-                .body("results.present_address.address_line[0]", Matchers.equalTo("Test1"))
-                .body("results.present_address.division_id[0]", Matchers.equalTo("10"))
-                .body("results.present_address.district_id[0]", Matchers.equalTo("04"))
-                .body("results.present_address.upazila_id[0]", Matchers.equalTo("09"))
-                .body("results.present_address.city_corporation_id[0]", Matchers.equalTo("99"))
-                .body("results.present_address.union_or_urban_ward_id[0]", Matchers.equalTo("13"));
-
-        System.out.println("Patient with BRN " + primaryPatient.getBinBRN() + " verified in MCI");
-
-
-    }
-
-
-
-
-
 
 }

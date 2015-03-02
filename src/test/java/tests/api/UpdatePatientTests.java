@@ -2,7 +2,6 @@ package tests.api;
 
 import categories.ApiTest;
 import data.PatientDataSetUp;
-import data.PatientDataStore;
 import domain.Patient;
 import org.hamcrest.Matchers;
 import org.json.JSONException;
@@ -17,31 +16,30 @@ import static utils.FileUtil.asString;
 
 public class UpdatePatientTests extends PatientDataSetUp {
 
-    protected Patient primaryPatient;
     JSONObject updatedValue= new JSONObject();
-    PatientDataStore dataStore = new PatientDataStore();
 
     @Category(ApiTest.class)
     @Test
-    public void verifyPatientUpdateWithFullUpdatedPayload() throws JSONException, InterruptedException {
+    public void verifyPatientUpdateWithFullUpdatedPayload() throws Exception {
 
-        primaryPatient= dataStore.defaultPatient;
+        String json = asString("jsons/patient/full_payload_without_ids.json");
+        String hid = createPatient(json);
 
-        JSONObject patient = createPatientDataJsonToPost(primaryPatient);
-        String hid = createPatient(patient);
-        String json = asString("jsons/patient/full_payload_with_updated_data.json");
-        updatePatientByJsonData(hid, json);
+        String updatedJson = asString("jsons/patient/full_payload_with_updated_data.json");
+        updatePatient(updatedJson, hid);
+
+        Patient patient = getPatientObjectFromString(updatedJson);
 
         given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
                 .when().get("/patients/{hid}")
                 .then()
-                .body("sur_name", Matchers.equalTo("AymaanAymaan"))
-                .body("date_of_birth", Matchers.equalTo("1990-02-28"))
-                .body("bin_brn", Matchers.equalTo("12345678901234590"))
-                .body("status", Matchers.equalTo("2"))
-                .body("confidential", Matchers.equalTo("Yes"))
-                .body("household_code", Matchers.equalTo("5678"));
+                .body("sur_name", Matchers.equalTo(patient.getSurName()))
+                .body("date_of_birth", Matchers.equalTo(patient.getDateOfBirth()))
+                .body("bin_brn", Matchers.equalTo(patient.getBirthRegistrationNumber()))
+                .body("status", Matchers.equalTo(patient.getStatus()))
+                .body("confidential", Matchers.equalTo(patient.getConfidential()))
+                .body("household_code", Matchers.equalTo(patient.getHouseholdCode()));
 
     }
 
@@ -49,12 +47,11 @@ public class UpdatePatientTests extends PatientDataSetUp {
     @Test
     public void verifyPatientPartialUpdate() throws JSONException, InterruptedException {
 
-        primaryPatient= dataStore.defaultPatient;
+        String json = asString("jsons/patient/full_payload_without_ids.json");
+        String hid = createPatient(json);
 
-        JSONObject patient = createPatientDataJsonToPost(primaryPatient);
-        String hid = createPatient(patient);
         updatedValue.put("sur_name", "updated");
-        updatePatient(updatedValue, hid);
+        updatePatient(updatedValue.toString(), hid);
 
         given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())

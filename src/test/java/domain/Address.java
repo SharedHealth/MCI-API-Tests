@@ -1,98 +1,159 @@
 package domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Address {
 
-    private String division;
-    private String district;
-    private String upazilla;
-    private String cityCorporation;
-    private String union_or_urban_ward;
-    private String addressLine1;
+    @JsonProperty("address_line")
+    private String addressLine;
 
-    public String getDivision() {
-        return division;
+    @JsonProperty("division_id")
+    private String divisionId;
+
+    @JsonProperty("district_id")
+    private String districtId;
+
+    @JsonProperty("upazila_id")
+    private String upazilaId;
+
+    @JsonProperty("city_corporation_id")
+    private String cityCorporationId;
+
+    @JsonProperty("union_or_urban_ward_id")
+    private String unionOrUrbanWardId;
+
+    @JsonProperty("rural_ward_id")
+    private String ruralWardId;
+
+    @JsonProperty("holding_number")
+    private String holdingNumber;
+
+
+    private String street;
+
+    @JsonProperty("area_mouja")
+    private String areaMouja;
+
+    private String village;
+
+    @JsonProperty("post_office")
+    private String postOffice;
+
+    @JsonProperty("post_code")
+    private String postCode;
+
+    @JsonProperty("country_code")
+    private String countryCode = "050";
+
+    public String getAddressLine() {
+        return addressLine;
     }
 
-    public String getDistrict() {
-        return district;
+    public void setAddressLine(String addressLine) {
+        this.addressLine = addressLine;
     }
 
-    public String getUpazilla() {
-        return upazilla;
+    public String getDivisionId() {
+        return divisionId;
     }
 
-    public String getUnion_or_urban_ward() {
-        return union_or_urban_ward;
+    public void setDivisionId(String divisionId) {
+        this.divisionId = divisionId;
     }
 
-    public String getCityCorporation() {
-        return cityCorporation;
+    public String getDistrictId() {
+        return districtId;
     }
 
-    public String getAddressLine1() { return addressLine1; }
-
-    private Address(AddressBuilder builder) {
-        this.division = builder.division;
-        this.district = builder.district;
-        this.upazilla = builder.upazilla;
-        this.cityCorporation = builder.cityCorporation;
-        this.union_or_urban_ward = builder.union_or_urban_ward;
-        this.addressLine1 = builder.addressLine1;
+    public void setDistrictId(String districtId) {
+        this.districtId = districtId;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("Address{");
-        sb.append("division='").append(division).append('\'');
-        sb.append(", district='").append(district).append('\'');
-        sb.append(", upazilla='").append(upazilla).append('\'');
-        sb.append(", union_or_urban_ward='").append(union_or_urban_ward).append('\'');
-        sb.append(", addressLine1='").append(addressLine1).append('\'');
-        sb.append('}');
-        return sb.toString();
+    public String getUpazilaId() {
+        return upazilaId;
     }
 
-    public static class AddressBuilder {
+    public void setUpazilaId(String upazilaId) {
+        this.upazilaId = upazilaId;
+    }
 
-        private String division;
-        private String district;
-        private String upazilla;
-        private String union_or_urban_ward;
-        private String addressLine1;
-        private String cityCorporation;
+    public String getCityCorporationId() {
+        return cityCorporationId;
+    }
 
-        public AddressBuilder division(String division) {
-            this.division = division;
-            return this;
-        }
+    public void setCityCorporationId(String cityCorporationId) {
+        this.cityCorporationId = cityCorporationId;
+    }
 
-        public AddressBuilder district(String district) {
-            this.district = district;
-            return this;
-        }
+    public String getUnionOrUrbanWardId() {
+        return unionOrUrbanWardId;
+    }
 
-        public AddressBuilder upazilla(String upazilla) {
-            this.upazilla = upazilla;
-            return this;
-        }
+    public void setUnionOrUrbanWardId(String unionOrUrbanWardId) {
+        this.unionOrUrbanWardId = unionOrUrbanWardId;
+    }
 
-        public AddressBuilder union_or_urban_ward(String union_or_urban_ward) {
-            this.union_or_urban_ward = union_or_urban_ward;
-            return this;
-        }
+    public String getRuralWardId() {
+        return ruralWardId;
+    }
 
-        public AddressBuilder cityCorporation(String cityCorporation) {
-            this.cityCorporation = cityCorporation;
-            return this;
-        }
+    public void setRuralWardId(String ruralWardId) {
+        this.ruralWardId = ruralWardId;
+    }
 
-        public AddressBuilder addressLine1(String addressLine1) {
-            this.addressLine1 = addressLine1;
-            return this;
-        }
+    public String getHoldingNumber() {
+        return holdingNumber;
+    }
 
-        public Address build() {
-            return new Address(this);
-        }
+    public void setHoldingNumber(String holdingNumber) {
+        this.holdingNumber = holdingNumber;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getAreaMouja() {
+        return areaMouja;
+    }
+
+    public void setAreaMouja(String areaMouja) {
+        this.areaMouja = areaMouja;
+    }
+
+    public String getVillage() {
+        return village;
+    }
+
+    public void setVillage(String village) {
+        this.village = village;
+    }
+
+    public String getPostOffice() {
+        return postOffice;
+    }
+
+    public void setPostOffice(String postOffice) {
+        this.postOffice = postOffice;
+    }
+
+    public String getPostCode() {
+        return postCode;
+    }
+
+    public void setPostCode(String postCode) {
+        this.postCode = postCode;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
     }
 }

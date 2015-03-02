@@ -2,37 +2,33 @@ package tests.api;
 
 import categories.ApiTest;
 import data.PatientDataSetUp;
-import data.PatientDataStore;
 import domain.Patient;
 import org.hamcrest.Matchers;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import utils.WebDriverProperties;
 
 import static com.jayway.restassured.RestAssured.given;
+import static utils.FileUtil.asString;
 
 
 public class SearchPatientTests extends PatientDataSetUp {
 
     String ApprovalURL="/catchments/100409/approvals/{hid}/";
-    protected Patient primaryPatient;
-    PatientDataStore dataStore = new PatientDataStore();
     JSONObject updatedValue= new JSONObject();
     JSONObject AddNewValue= new JSONObject();
 
     @Category(ApiTest.class)
     @Test
-    public void verifySearchAfterUpdatedPatientDataUsingApprovalProcess() throws JSONException, InterruptedException {
+    public void verifySearchAfterUpdatedPatientDataUsingApprovalProcess() throws Exception {
 
-        primaryPatient= dataStore.defaultPatient;
-
-        JSONObject patient = createPatientDataJsonToPost(primaryPatient);
-        String hid = createPatient(patient);
+        String json = asString("jsons/patient/full_payload_without_ids.json");
+        String hid = createPatient(json);
+        Patient patient = getPatientObjectFromString(json);
 
         updatedValue.put("given_name", "updated");
-        updatePatient(updatedValue, hid);
+        updatePatient(updatedValue.toString(), hid);
 
         given().pathParam("name", updatedValue.get("given_name"))
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
@@ -50,11 +46,11 @@ public class SearchPatientTests extends PatientDataSetUp {
     }
     @Category(ApiTest.class)
     @Test
-    public void verifySearchAfterPhoneNoBlockUpdateUsingApprovalProcess() throws JSONException, InterruptedException {
+    public void verifySearchAfterPhoneNoBlockUpdateUsingApprovalProcess() throws Exception {
 
-        primaryPatient= dataStore.defaultPatient;
-        JSONObject patient = createPatientDataJsonToPost(primaryPatient);
-        String hid = createPatient(patient);
+        String json = asString("jsons/patient/full_payload_without_ids.json");
+        String hid = createPatient(json);
+        Patient patient = getPatientObjectFromString(json);
 
         String number = String.valueOf(System.currentTimeMillis()).substring(7);
         updatedValue.put("country_code", "88");
@@ -63,7 +59,7 @@ public class SearchPatientTests extends PatientDataSetUp {
         updatedValue.put("extension", "3245");
         AddNewValue.put("phone_number", updatedValue);
 
-        updatePatient(AddNewValue, hid);
+        updatePatient(AddNewValue.toString(), hid);
 
         given().contentType("application/json")
                 .pathParam("hid", hid)
@@ -81,7 +77,7 @@ public class SearchPatientTests extends PatientDataSetUp {
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients?phone_no={phoneNumber}")
                 .then()
-                .body("results.given_name[0]", Matchers.equalTo(primaryPatient.getGiven_name()))
+                .body("results.given_name[0]", Matchers.equalTo(patient.getGivenName()))
                 .body("results.present_address.address_line[0]", Matchers.equalTo("Test1"))
                 .body("results.present_address.division_id[0]", Matchers.equalTo("10"))
                 .body("results.present_address.district_id[0]", Matchers.equalTo("04"))
@@ -95,96 +91,108 @@ public class SearchPatientTests extends PatientDataSetUp {
     @Test
     public void verifySearchUsingNationalID() throws Exception {
 
-        createPatientWithFullPayLoad();
+        String json = asString("jsons/patient/full_payload.json");
+        createPatient(json);
+        Patient patient = getPatientObjectFromString(json);
 
         given().pathParam("nid", "1234567890123")
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients?nid={nid}")
                 .then()
-                .body("results.given_name[0]", Matchers.equalTo("Zaman"))
-                .body("results.phone_number.number[0]", Matchers.equalTo("9678909"));
+                .body("results.given_name[0]", Matchers.equalTo(patient.getGivenName()))
+                .body("results.phone_number.number[0]", Matchers.equalTo(patient.getPhoneNumber().getNumber()));
 
     }
 
     @Test
     public void verifySearchUsingBirthRegistrationNumber() throws Exception {
 
-        createPatientWithFullPayLoad();
+        String json = asString("jsons/patient/full_payload.json");
+        createPatient(json);
+        Patient patient = getPatientObjectFromString(json);
 
         given().pathParam("bin_brn", "12345678901234567")
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients?bin_brn={bin_brn}")
                 .then()
-                .body("results.given_name[0]", Matchers.equalTo("Zaman"))
-                .body("results.phone_number.number[0]", Matchers.equalTo("9678909"));
+                .body("results.given_name[0]", Matchers.equalTo(patient.getGivenName()))
+                .body("results.phone_number.number[0]", Matchers.equalTo(patient.getPhoneNumber().getNumber()));
 
     }
 
     @Test
     public void verifySearchUsingUserId() throws Exception {
 
-        createPatientWithFullPayLoad();
+        String json = asString("jsons/patient/full_payload.json");
+        createPatient(json);
+        Patient patient = getPatientObjectFromString(json);
 
         given().pathParam("uid", "11111111111")
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients?uid={uid}")
                 .then()
-                .body("results.given_name[0]", Matchers.equalTo("Zaman"))
-                .body("results.phone_number.number[0]", Matchers.equalTo("9678909"));
+                .body("results.given_name[0]", Matchers.equalTo(patient.getGivenName()))
+                .body("results.phone_number.number[0]", Matchers.equalTo(patient.getPhoneNumber().getNumber()));
 
     }
 
     @Test
     public void verifySearchUsingPresentAddressAndGivenName() throws Exception {
 
-        createPatientWithFullPayLoad();
+        String json = asString("jsons/patient/full_payload.json");
+        createPatient(json);
+        Patient patient = getPatientObjectFromString(json);
 
         given().pathParam("present_address", "557364")
-                .pathParam("given_name", "Zaman")
+                .pathParam("given_name", patient.getGivenName())
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients?present_address={present_address}&given_name={given_name}")
                 .then()
-                .body("results.present_address.division_id[0]", Matchers.equalTo("55"))
-                .body("results.present_address.district_id[0]", Matchers.equalTo("73"))
-                .body("results.present_address.upazila_id[0]", Matchers.equalTo("64"))
-                .body("results.given_name[0]", Matchers.equalTo("Zaman"))
-                .body("results.phone_number.number[0]", Matchers.equalTo("9678909"));
+                .body("results.present_address.division_id[0]", Matchers.equalTo(patient.getAddress().getDivisionId()))
+                .body("results.present_address.district_id[0]", Matchers.equalTo(patient.getAddress().getDistrictId()))
+                .body("results.present_address.upazila_id[0]", Matchers.equalTo(patient.getAddress().getUpazilaId()))
+                .body("results.given_name[0]", Matchers.equalTo(patient.getGivenName()))
+                .body("results.phone_number.number[0]", Matchers.equalTo(patient.getPhoneNumber().getNumber()));
 
     }
 
     @Test
     public void verifySearchUsingPresentAddressAndGivenNameAndSurName() throws Exception {
 
-        createPatientWithFullPayLoad();
+        String json = asString("jsons/patient/full_payload.json");
+        createPatient(json);
+        Patient patient = getPatientObjectFromString(json);
 
         given().pathParam("present_address", "557364")
-                .pathParam("given_name", "Zaman")
-                .pathParam("sur_name", "Aymaan")
+                .pathParam("given_name", patient.getGivenName())
+                .pathParam("sur_name", patient.getSurName())
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients?present_address={present_address}&given_name={given_name}&sur_name={sur_name}")
                 .then()
-                .body("results.present_address.division_id[0]", Matchers.equalTo("55"))
-                .body("results.present_address.district_id[0]", Matchers.equalTo("73"))
-                .body("results.present_address.upazila_id[0]", Matchers.equalTo("64"))
-                .body("results.given_name[0]", Matchers.equalTo("Zaman"))
-                .body("results.phone_number.number[0]", Matchers.equalTo("9678909"));
+                .body("results.present_address.division_id[0]", Matchers.equalTo(patient.getAddress().getDivisionId()))
+                .body("results.present_address.district_id[0]", Matchers.equalTo(patient.getAddress().getDistrictId()))
+                .body("results.present_address.upazila_id[0]", Matchers.equalTo(patient.getAddress().getUpazilaId()))
+                .body("results.given_name[0]", Matchers.equalTo(patient.getGivenName()))
+                .body("results.phone_number.number[0]", Matchers.equalTo(patient.getPhoneNumber().getNumber()));
 
     }
 
     @Test
     public void verifySearchUsingPhoneNo() throws Exception {
 
-        createPatientWithFullPayLoad();
+        String json = asString("jsons/patient/full_payload.json");
+        createPatient(json);
+        Patient patient = getPatientObjectFromString(json);
 
-        given().pathParam("phone_no", "557364")
+        given().pathParam("phone_no", patient.getPhoneNumber().getNumber())
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients?phone_no={phone_no}")
                 .then()
-                .body("results.present_address.division_id[0]", Matchers.equalTo("55"))
-                .body("results.present_address.district_id[0]", Matchers.equalTo("73"))
-                .body("results.present_address.upazila_id[0]", Matchers.equalTo("64"))
-                .body("results.given_name[0]", Matchers.equalTo("Zaman"))
-                .body("results.phone_number.number[0]", Matchers.equalTo("9678909"));
+                .body("results.present_address.division_id[0]", Matchers.equalTo(patient.getAddress().getDivisionId()))
+                .body("results.present_address.district_id[0]", Matchers.equalTo(patient.getAddress().getDistrictId()))
+                .body("results.present_address.upazila_id[0]", Matchers.equalTo(patient.getAddress().getUpazilaId()))
+                .body("results.given_name[0]", Matchers.equalTo(patient.getGivenName()))
+                .body("results.phone_number.number[0]", Matchers.equalTo(patient.getPhoneNumber().getNumber()));
 
     }
 }
