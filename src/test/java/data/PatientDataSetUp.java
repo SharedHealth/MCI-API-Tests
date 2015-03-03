@@ -61,6 +61,16 @@ public class PatientDataSetUp {
                 .then().assertThat().statusCode(202);
     }
 
+    protected String getRandomNID()
+    {
+        return "9000000" + String.valueOf(System.currentTimeMillis()).substring(7);
+    }
+
+    protected String getRandomBirthRegNo()
+    {
+        return "90000001234" + String.valueOf(System.currentTimeMillis()).substring(7);
+    }
+
 
 
     @After

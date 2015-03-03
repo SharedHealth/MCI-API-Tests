@@ -35,9 +35,7 @@ public class UpdatePatientTests extends PatientDataSetUp {
                 .when().get("/patients/{hid}")
                 .then()
                 .body("sur_name", Matchers.equalTo(patient.getSurName()))
-                .body("date_of_birth", Matchers.equalTo(patient.getDateOfBirth()))
                 .body("bin_brn", Matchers.equalTo(patient.getBirthRegistrationNumber()))
-                .body("status", Matchers.equalTo(patient.getStatus()))
                 .body("confidential", Matchers.equalTo(patient.getConfidential()))
                 .body("household_code", Matchers.equalTo(patient.getHouseholdCode()));
 

@@ -15,7 +15,7 @@ import static utils.FileUtil.asString;
 
 public class SearchPatientTests extends PatientDataSetUp {
 
-    String ApprovalURL="/catchments/100409/approvals/{hid}/";
+    String ApprovalURL="/catchments/557364/approvals/{hid}/";
     JSONObject updatedValue= new JSONObject();
     JSONObject AddNewValue= new JSONObject();
 
@@ -30,15 +30,15 @@ public class SearchPatientTests extends PatientDataSetUp {
         updatedValue.put("given_name", "updated");
         updatePatient(updatedValue.toString(), hid);
 
-        given().pathParam("name", updatedValue.get("given_name"))
+        given().pathParam("name", patient.getGivenName())
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
-                .when().get("/patients?given_name={name}&present_address=100409")
+                .when().get("/patients?given_name={name}&present_address=557364")
                 .then()
-                .body("results.given_name[0]", Matchers.equalTo(updatedValue.get("given_name")))
-                .body("results.present_address.address_line[0]", Matchers.equalTo("Test1"))
-                .body("results.present_address.division_id[0]", Matchers.equalTo("10"))
-                .body("results.present_address.district_id[0]", Matchers.equalTo("04"))
-                .body("results.present_address.upazila_id[0]", Matchers.equalTo("09"));
+                .body("results[0].given_name", Matchers.equalTo(patient.getGivenName()))
+                .body("results[0].present_address.address_line", Matchers.equalTo(patient.getAddress().getAddressLine()))
+                .body("results[0].present_address.division_id", Matchers.equalTo(patient.getAddress().getDivisionId()))
+                .body("results[0].present_address.district_id", Matchers.equalTo(patient.getAddress().getDistrictId()))
+                .body("results[0].present_address.upazila_id", Matchers.equalTo(patient.getAddress().getUpazilaId()));
 
         System.out.println("Verify that patient is searched with name & location");
 
@@ -77,12 +77,12 @@ public class SearchPatientTests extends PatientDataSetUp {
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients?phone_no={phoneNumber}")
                 .then()
-                .body("results.given_name[0]", Matchers.equalTo(patient.getGivenName()))
-                .body("results.present_address.address_line[0]", Matchers.equalTo("Test1"))
-                .body("results.present_address.division_id[0]", Matchers.equalTo("10"))
-                .body("results.present_address.district_id[0]", Matchers.equalTo("04"))
-                .body("results.present_address.upazila_id[0]", Matchers.equalTo("09"))
-                .body("results.phone_number.number[0]", Matchers.equalTo(updatedValue.get("number")));
+                .body("results[0].given_name", Matchers.equalTo(patient.getGivenName()))
+                .body("results[0].present_address.address_line", Matchers.equalTo(patient.getAddress().getAddressLine()))
+                .body("results[0].present_address.division_id", Matchers.equalTo(patient.getAddress().getDivisionId()))
+                .body("results[0].present_address.district_id", Matchers.equalTo(patient.getAddress().getDistrictId()))
+                .body("results[0].present_address.upazila_id", Matchers.equalTo(patient.getAddress().getUpazilaId()))
+                .body("results[0].phone_number.number", Matchers.equalTo(updatedValue.get("number")));
 
         System.out.println("Verify that patient is searched with phone_no");
 
@@ -99,8 +99,8 @@ public class SearchPatientTests extends PatientDataSetUp {
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients?nid={nid}")
                 .then()
-                .body("results.given_name[0]", Matchers.equalTo(patient.getGivenName()))
-                .body("results.phone_number.number[0]", Matchers.equalTo(patient.getPhoneNumber().getNumber()));
+                .body("results[0].given_name", Matchers.equalTo(patient.getGivenName()))
+                .body("results[0].phone_number.number", Matchers.equalTo(patient.getPhoneNumber().getNumber()));
 
     }
 
@@ -115,8 +115,8 @@ public class SearchPatientTests extends PatientDataSetUp {
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients?bin_brn={bin_brn}")
                 .then()
-                .body("results.given_name[0]", Matchers.equalTo(patient.getGivenName()))
-                .body("results.phone_number.number[0]", Matchers.equalTo(patient.getPhoneNumber().getNumber()));
+                .body("results[0].given_name", Matchers.equalTo(patient.getGivenName()))
+                .body("results[0].phone_number.number", Matchers.equalTo(patient.getPhoneNumber().getNumber()));
 
     }
 
@@ -131,8 +131,8 @@ public class SearchPatientTests extends PatientDataSetUp {
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients?uid={uid}")
                 .then()
-                .body("results.given_name[0]", Matchers.equalTo(patient.getGivenName()))
-                .body("results.phone_number.number[0]", Matchers.equalTo(patient.getPhoneNumber().getNumber()));
+                .body("results[0].given_name", Matchers.equalTo(patient.getGivenName()))
+                .body("results[0].phone_number.number", Matchers.equalTo(patient.getPhoneNumber().getNumber()));
 
     }
 
@@ -148,11 +148,11 @@ public class SearchPatientTests extends PatientDataSetUp {
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients?present_address={present_address}&given_name={given_name}")
                 .then()
-                .body("results.present_address.division_id[0]", Matchers.equalTo(patient.getAddress().getDivisionId()))
-                .body("results.present_address.district_id[0]", Matchers.equalTo(patient.getAddress().getDistrictId()))
-                .body("results.present_address.upazila_id[0]", Matchers.equalTo(patient.getAddress().getUpazilaId()))
-                .body("results.given_name[0]", Matchers.equalTo(patient.getGivenName()))
-                .body("results.phone_number.number[0]", Matchers.equalTo(patient.getPhoneNumber().getNumber()));
+                .body("results[0].present_address.division_id", Matchers.equalTo(patient.getAddress().getDivisionId()))
+                .body("results[0].present_address.district_id", Matchers.equalTo(patient.getAddress().getDistrictId()))
+                .body("results[0].present_address.upazila_id", Matchers.equalTo(patient.getAddress().getUpazilaId()))
+                .body("results[0].given_name", Matchers.equalTo(patient.getGivenName()))
+                .body("results[0].phone_number.number", Matchers.equalTo(patient.getPhoneNumber().getNumber()));
 
     }
 
@@ -169,11 +169,11 @@ public class SearchPatientTests extends PatientDataSetUp {
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients?present_address={present_address}&given_name={given_name}&sur_name={sur_name}")
                 .then()
-                .body("results.present_address.division_id[0]", Matchers.equalTo(patient.getAddress().getDivisionId()))
-                .body("results.present_address.district_id[0]", Matchers.equalTo(patient.getAddress().getDistrictId()))
-                .body("results.present_address.upazila_id[0]", Matchers.equalTo(patient.getAddress().getUpazilaId()))
-                .body("results.given_name[0]", Matchers.equalTo(patient.getGivenName()))
-                .body("results.phone_number.number[0]", Matchers.equalTo(patient.getPhoneNumber().getNumber()));
+                .body("results[0].present_address.division_id", Matchers.equalTo(patient.getAddress().getDivisionId()))
+                .body("results[0].present_address.district_id", Matchers.equalTo(patient.getAddress().getDistrictId()))
+                .body("results[0].present_address.upazila_id", Matchers.equalTo(patient.getAddress().getUpazilaId()))
+                .body("results[0].given_name", Matchers.equalTo(patient.getGivenName()))
+                .body("results[0].phone_number.number", Matchers.equalTo(patient.getPhoneNumber().getNumber()));
 
     }
 
@@ -188,11 +188,11 @@ public class SearchPatientTests extends PatientDataSetUp {
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients?phone_no={phone_no}")
                 .then()
-                .body("results.present_address.division_id[0]", Matchers.equalTo(patient.getAddress().getDivisionId()))
-                .body("results.present_address.district_id[0]", Matchers.equalTo(patient.getAddress().getDistrictId()))
-                .body("results.present_address.upazila_id[0]", Matchers.equalTo(patient.getAddress().getUpazilaId()))
-                .body("results.given_name[0]", Matchers.equalTo(patient.getGivenName()))
-                .body("results.phone_number.number[0]", Matchers.equalTo(patient.getPhoneNumber().getNumber()));
+                .body("results[0].present_address.division_id", Matchers.equalTo(patient.getAddress().getDivisionId()))
+                .body("results[0].present_address.district_id", Matchers.equalTo(patient.getAddress().getDistrictId()))
+                .body("results[0].present_address.upazila_id", Matchers.equalTo(patient.getAddress().getUpazilaId()))
+                .body("results[0].given_name", Matchers.equalTo(patient.getGivenName()))
+                .body("results[0].phone_number.number", Matchers.equalTo(patient.getPhoneNumber().getNumber()));
 
     }
 }

@@ -4,7 +4,6 @@ import categories.ApiTest;
 import data.PatientDataSetUp;
 import domain.Patient;
 import org.hamcrest.Matchers;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -79,9 +78,8 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
         String json = asString("jsons/patient/full_payload_without_ids.json");
         String hid = createPatient(json);
-        Patient patient = getPatientObjectFromString(json);
 
-        AddNewValue.put("occupation", "02");
+        AddNewValue.put("occupation", "03");
         updatePatient(AddNewValue.toString(), hid);
 
         given().contentType("application/json")
@@ -109,7 +107,7 @@ public class PatientApprovalTests extends PatientDataSetUp {
         String hid = createPatient(json);
         Patient patient = getPatientObjectFromString(json);
 
-        AddNewValue.put("occupation", "02");
+        AddNewValue.put("occupation", "03");
         updatePatient(AddNewValue.toString(), hid);
 
 
@@ -124,7 +122,7 @@ public class PatientApprovalTests extends PatientDataSetUp {
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients/{hid}")
                 .then()
-                .body("occupation", Matchers.nullValue());
+                .body("occupation", Matchers.equalTo(patient.getOccupation()));
 
 
         System.out.println("Verify that patient new data is rejected");
@@ -136,7 +134,6 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
         String json = asString("jsons/patient/full_payload_without_ids.json");
         String hid = createPatient(json);
-        Patient patient = getPatientObjectFromString(json);
 
         updatedValue.put("given_name", "updated");
         updatedValue.put("gender", "O");
@@ -224,7 +221,6 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
         String json = asString("jsons/patient/full_payload_without_ids.json");
         String hid = createPatient(json);
-        Patient patient = getPatientObjectFromString(json);
 
         String beforeUpdate = given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
@@ -265,7 +261,7 @@ public class PatientApprovalTests extends PatientDataSetUp {
     }
 
     @Category(ApiTest.class)
-    @Test(expected = JSONException.class)
+    @Test
     public void verifyPhoneBlockDataUpdateUsingPatientApprovalRejectProcess() throws Exception {
 
         String json = asString("jsons/patient/full_payload_without_ids.json");
@@ -294,40 +290,17 @@ public class PatientApprovalTests extends PatientDataSetUp {
                 .then().assertThat().statusCode(202);
 
 
-        String afterUpdateRejected = given().pathParam("hid", hid)
+        given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients/{hid}")
-                .andReturn().body().print();
-        JSONObject updatedPatient = new JSONObject(afterUpdateRejected);
-        updatedPatient.get("phone_number");
-
-    }
-
-    @Category(ApiTest.class)
-    @Test
-    public void verifySearchAfterUpdatedPatientDataWithNameAddress() throws Exception {
-
-        String json = asString("jsons/patient/full_payload_without_ids.json");
-        String hid = createPatient(json);
-        Patient patient = getPatientObjectFromString(json);
-
-        updatedValue.put("given_name", "updated");
-        updatePatient(updatedValue.toString(), hid);
-
-        given().pathParam("name", updatedValue.get("given_name"))
-                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
-                .when().get("/patients?given_name={name}&present_address=100409")
                 .then()
-                .body("results.given_name", Matchers.equalTo(updatedValue.get("given_name")))
-                .body("results.present_address.address_line", Matchers.equalTo(patient.getAddress().getAddressLine()))
-                .body("results.present_address.division_id", Matchers.equalTo(patient.getAddress().getDivisionId()))
-                .body("results.present_address.district_id", Matchers.equalTo(patient.getAddress().getDistrictId()))
-                .body("results.present_address.upazila_id", Matchers.equalTo(patient.getAddress().getUpazilaId()));
-
-        System.out.println("Verify that patient is searched with name & location");
-
+                .body("phone_number.country_code", Matchers.equalTo(patient.getPhoneNumber().getCountryCode()))
+                .body("phone_number.area_code", Matchers.equalTo(patient.getPhoneNumber().getAreaCode()))
+                .body("phone_number.number", Matchers.equalTo(patient.getPhoneNumber().getNumber()))
+                .body("phone_number.extension", Matchers.equalTo(patient.getPhoneNumber().getExtension()));
 
     }
+
 
     @Category(ApiTest.class)
     @Test
@@ -362,12 +335,12 @@ public class PatientApprovalTests extends PatientDataSetUp {
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
                 .when().get("/patients?phone_no={phoneNumber}")
                 .then()
-                .body("results.given_name[0]", Matchers.equalTo(patient.getGivenName()))
-                .body("results.present_address.address_line", Matchers.equalTo(patient.getAddress().getAddressLine()))
-                .body("results.present_address.division_id", Matchers.equalTo(patient.getAddress().getDivisionId()))
-                .body("results.present_address.district_id", Matchers.equalTo(patient.getAddress().getDistrictId()))
-                .body("results.present_address.upazila_id", Matchers.equalTo(patient.getAddress().getUpazilaId()))
-                .body("results.phone_number.number", Matchers.equalTo(updatedValue.get("number")));
+                .body("results[0].given_name", Matchers.equalTo(patient.getGivenName()))
+                .body("results[0].present_address.address_line", Matchers.equalTo(patient.getAddress().getAddressLine()))
+                .body("results[0].present_address.division_id", Matchers.equalTo(patient.getAddress().getDivisionId()))
+                .body("results[0].present_address.district_id", Matchers.equalTo(patient.getAddress().getDistrictId()))
+                .body("results[0].present_address.upazila_id", Matchers.equalTo(patient.getAddress().getUpazilaId()))
+                .body("results[0].phone_number.number", Matchers.equalTo(updatedValue.get("number")));
 
         System.out.println("Verify that patient is searched with phone_no");
 
