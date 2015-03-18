@@ -22,6 +22,8 @@ public class CreatePatientTests extends PatientDataSetUp {
         Patient patient = getPatientObjectFromString(json);
 
         given().header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header("from", email.trim())
                 .when().get("/patients/" + hid)
                 .then()
                 .body("hid", Matchers.notNullValue())
@@ -50,6 +52,8 @@ public class CreatePatientTests extends PatientDataSetUp {
 
         given().contentType("application/json")
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header("from", email.trim())
                 .body(updatedJson)
                 .when().post("/patients")
                 .then()

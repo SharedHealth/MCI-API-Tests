@@ -32,6 +32,8 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
         given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .when().get("/patients/{hid}")
                 .then()
                 .body("sur_name", Matchers.equalTo(patient.getSurName()))
@@ -53,6 +55,8 @@ public class UpdatePatientTests extends PatientDataSetUp {
 
         given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"),token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .when().get("/patients/{hid}")
                 .then()
                 .body("sur_name", Matchers.equalTo("updated"));

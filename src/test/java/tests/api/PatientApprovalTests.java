@@ -34,12 +34,16 @@ public class PatientApprovalTests extends PatientDataSetUp {
         given().contentType("Application/json")
                 .pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .body(updatedValue.toString())
                 .when().put(ApprovalURL)
                 .then().assertThat().statusCode(202);
 
         given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .when().get("/patients/{hid}")
                 .then()
                 .body("given_name", Matchers.equalTo(updatedValue.get("given_name")));
@@ -59,6 +63,8 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
         given().contentType("Application/json")
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .pathParam("hid", hid)
                 .body(updatedValue.toString())
                 .when().delete(ApprovalURL)
@@ -66,6 +72,8 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
         given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .when().get("/patients/{hid}")
                 .then()
                 .body("given_name", Matchers.equalTo(patient.getGivenName()));
@@ -85,6 +93,8 @@ public class PatientApprovalTests extends PatientDataSetUp {
         given().contentType("application/json")
                 .pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .body(AddNewValue.toString())
                 .when().put(ApprovalURL)
                 .then().assertThat().statusCode(202);
@@ -92,6 +102,8 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
         given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .when().get("/patients/{hid}")
                 .then()
                 .body("occupation", Matchers.equalTo(AddNewValue.get("occupation")));
@@ -114,12 +126,16 @@ public class PatientApprovalTests extends PatientDataSetUp {
         given().contentType("Application/json")
                 .pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .body(AddNewValue.toString())
                 .when().delete(ApprovalURL)
                 .then().assertThat().statusCode(202);
 
         given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .when().get("/patients/{hid}")
                 .then()
                 .body("occupation", Matchers.equalTo(patient.getOccupation()));
@@ -141,6 +157,8 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
         given().contentType("application/json")
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .pathParam("hid", hid)
                 .body(updatedValue.toString())
                 .when().put(ApprovalURL)
@@ -148,6 +166,8 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
         given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .when().get("/patients/{hid}")
                 .then()
                 .body("given_name", Matchers.equalTo(updatedValue.get("given_name")))
@@ -171,12 +191,16 @@ public class PatientApprovalTests extends PatientDataSetUp {
         given().contentType("Application/json")
                 .pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .body(updatedValue.toString())
                 .when().delete(ApprovalURL)
                 .then().assertThat().statusCode(202);
 
         given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .when().get("/patients/{hid}")
                 .then()
                 .body("given_name", Matchers.equalTo(patient.getGivenName()))
@@ -201,6 +225,8 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
         given().contentType("Application/json")
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .pathParam("hid", hid)
                 .body(updatedValue.toString())
                 .when().put(ApprovalURL)
@@ -208,6 +234,8 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
         given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .when().get("/patients/{hid}")
                 .then()
                 .body("given_name", Matchers.equalTo(updatedValue.get("given_name")));
@@ -224,6 +252,8 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
         String beforeUpdate = given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .when().get("/patients/{hid}")
                 .andReturn().body().print();
 
@@ -238,6 +268,8 @@ public class PatientApprovalTests extends PatientDataSetUp {
         given().contentType("application/json")
                 .pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .body(AddNewValue.toString())
                 .when().put(ApprovalURL)
                 .then().assertThat().statusCode(202);
@@ -245,11 +277,15 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
         String afterUpdateApproved = given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .when().get("/patients/{hid}")
                 .andReturn().body().print();
 
         given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .when().get("/patients/{hid}")
                 .then()
                 .body("phone_number.country_code", Matchers.equalTo(updatedValue.get("country_code")))
@@ -270,6 +306,8 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
         String beforeUpdate = given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .when().get("/patients/{hid}")
                 .andReturn().body().print();
         System.out.println("beforeUpdate:" + beforeUpdate);
@@ -284,6 +322,8 @@ public class PatientApprovalTests extends PatientDataSetUp {
         updatePatient(AddNewValue.toString(), hid);
         given().contentType("application/json")
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .pathParam("hid", hid)
                 .body(AddNewValue.toString())
                 .when().delete(ApprovalURL)
@@ -292,6 +332,8 @@ public class PatientApprovalTests extends PatientDataSetUp {
 
         given().pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .when().get("/patients/{hid}")
                 .then()
                 .body("phone_number.country_code", Matchers.equalTo(patient.getPhoneNumber().getCountryCode()))
@@ -322,17 +364,23 @@ public class PatientApprovalTests extends PatientDataSetUp {
         given().contentType("application/json")
                 .pathParam("hid", hid)
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .body(AddNewValue.toString())
                 .when().put(ApprovalURL)
                 .then().assertThat().statusCode(202);
 
         given().pathParam("phoneNumber", updatedValue.get("number"))
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .when().get("/patients?phone_no={phoneNumber}")
                 .print();
 
         given().pathParam("phoneNumber", updatedValue.get("number"))
                 .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
                 .when().get("/patients?phone_no={phoneNumber}")
                 .then()
                 .body("results[0].given_name", Matchers.equalTo(patient.getGivenName()))

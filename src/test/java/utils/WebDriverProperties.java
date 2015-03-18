@@ -33,15 +33,37 @@ public class WebDriverProperties {
         RestAssured.rootPath = "";
         RestAssured.config = new RestAssuredConfig().encoderConfig(encoderConfig().defaultContentCharset("UTF-8"));
 
-        JSONObject credential = new JSONObject();
-        credential.put("user", WebDriverProperties.getProperty("MCI_USER_NAME"));
-        credential.put("password", WebDriverProperties.getProperty("MCI_USER_PASSWORD"));
 
-        Response response = given().contentType("application/json")
-                .body(credential.toString())
-                .post("/login").andReturn();
+        Response response = given().contentType("application/x-www-form-urlencoded")
+                .header("X-Auth-Token", WebDriverProperties.getProperty("MCI_IDENTITY_TOKEN"))
+                .header("client_id", WebDriverProperties.getProperty("MCI_IDENTITY_CLIENT_ID"))
+                .formParam("email", WebDriverProperties.getProperty("MCI_IDENTITY_EMAIL"))
+                .formParam("password", WebDriverProperties.getProperty("MCI_IDENTITY_PASSWORD"))
+                .post("/signin").andReturn();
 
-        return response.getBody().asString().replace("\"", "");
+        System.out.println(response.getBody().asString());
+        JSONObject jsonObject = new JSONObject(response.getBody().asString());
+
+        return jsonObject.get("access_token").toString();
+
+    }
+
+    public static String getUserId(String token) throws JSONException {
+        RestAssured.baseURI = WebDriverProperties.getProperty("MCI_IDENTITY_SERVER_URI");
+        RestAssured.basePath = "";
+        RestAssured.port = Integer.parseInt(WebDriverProperties.getProperty("MCI_IDENTITY_PORT"));
+        RestAssured.rootPath = "";
+        RestAssured.config = new RestAssuredConfig().encoderConfig(encoderConfig().defaultContentCharset("UTF-8"));
+
+        Response response = given().contentType("application/x-www-form-urlencoded")
+                .header("X-Auth-Token", WebDriverProperties.getProperty("MCI_IDENTITY_TOKEN"))
+                .header("client_id", WebDriverProperties.getProperty("MCI_IDENTITY_CLIENT_ID"))
+                .get("/token/" + token).andReturn();
+
+        System.out.println(response.getBody().asString());
+        JSONObject jsonObject = new JSONObject(response.getBody().asString());
+
+        return jsonObject.get("id").toString();
 
     }
 
