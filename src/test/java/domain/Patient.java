@@ -71,14 +71,12 @@ public class Patient {
     @JsonProperty("marital_status")
     private String maritalStatus;
 
-    private String status;
+    @JsonProperty("status")
+    private PatientStatus status;
     private String confidential;
 
     @JsonProperty("household_code")
     private String householdCode;
-
-    @JsonProperty("date_of_death")
-    private String dateOfDeath;
 
     @JsonProperty("created_at")
     private UUID createdAt;
@@ -279,14 +277,6 @@ public class Patient {
         this.maritalStatus = maritalStatus;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public String getConfidential() {
         return confidential;
     }
@@ -301,14 +291,6 @@ public class Patient {
 
     public void setHouseholdCode(String householdCode) {
         this.householdCode = householdCode;
-    }
-
-    public String getDateOfDeath() {
-        return dateOfDeath;
-    }
-
-    public void setDateOfDeath(String dateOfDeath) {
-        this.dateOfDeath = dateOfDeath;
     }
 
     public UUID getCreatedAt() {
@@ -327,9 +309,17 @@ public class Patient {
         this.updatedAt = updatedAt;
     }
 
+    public PatientStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(PatientStatus status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
-        return "PatientData{" +
+        return "Patient{" +
                 "healthId='" + healthId + '\'' +
                 ", nationalId='" + nationalId + '\'' +
                 ", birthRegistrationNumber='" + birthRegistrationNumber + '\'' +
@@ -354,11 +344,11 @@ public class Patient {
                 ", primaryContactNumber=" + primaryContactNumber +
                 ", permanentAddress=" + permanentAddress +
                 ", maritalStatus='" + maritalStatus + '\'' +
-                ", status='" + status + '\'' +
-                ", dateOfDeath='" + dateOfDeath + '\'' +
-                ", createdAt='" + createdAt + '\'' +
-                ", updatedAt='" + updatedAt + '\'' +
+                ", status=" + status +
+                ", confidential='" + confidential + '\'' +
                 ", householdCode='" + householdCode + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
 }

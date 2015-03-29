@@ -16,7 +16,7 @@ import static utils.FileUtil.asString;
 
 public class PatientApprovalTests extends PatientDataSetUp {
 
-    String ApprovalURL = "/catchments/557364/approvals/{hid}/";
+    String ApprovalURL = "/catchments/302602/approvals/{hid}/";
     JSONObject updatedValue = new JSONObject();
     JSONObject AddNewValue = new JSONObject();
 
@@ -258,7 +258,7 @@ public class PatientApprovalTests extends PatientDataSetUp {
                 .andReturn().body().print();
 
         String number = String.valueOf(System.currentTimeMillis()).substring(7);
-        updatedValue.put("country_code", "88");
+        updatedValue.put("country_code", "050");
         updatedValue.put("area_code", "02");
         updatedValue.put("number", number);
         updatedValue.put("extension", "3245");
@@ -313,7 +313,7 @@ public class PatientApprovalTests extends PatientDataSetUp {
         System.out.println("beforeUpdate:" + beforeUpdate);
         System.out.println(hid);
         String number = String.valueOf(System.currentTimeMillis()).substring(7);
-        updatedValue.put("country_code", "88");
+        updatedValue.put("country_code", "050");
         updatedValue.put("area_code", "02");
         updatedValue.put("number", number);
         updatedValue.put("extension", "3245");
@@ -353,7 +353,7 @@ public class PatientApprovalTests extends PatientDataSetUp {
         Patient patient = getPatientObjectFromString(json);
 
         String number = String.valueOf(System.currentTimeMillis()).substring(7);
-        updatedValue.put("country_code", "88");
+        updatedValue.put("country_code", "050");
         updatedValue.put("area_code", "02");
         updatedValue.put("number", number);
         updatedValue.put("extension", "3245");
@@ -391,6 +391,84 @@ public class PatientApprovalTests extends PatientDataSetUp {
                 .body("results[0].phone_number.number", Matchers.equalTo(updatedValue.get("number")));
 
         System.out.println("Verify that patient is searched with phone_no");
+
+    }
+
+    @Category(ApiTest.class)
+    @Test
+    public void verifyPrimaryContactFieldUpdateUsingPatientApprovalAcceptProcess() throws Exception {
+
+        String json = asString("jsons/patient/full_payload_without_ids.json");
+        String hid = createPatient(json);
+
+        String number = String.valueOf(System.currentTimeMillis()).substring(7);
+        updatedValue.put("country_code", "050");
+        updatedValue.put("area_code", "02");
+        updatedValue.put("number", number);
+        updatedValue.put("extension", "3245");
+        AddNewValue.put("primary_contact_number", updatedValue);
+
+        updatePatient(AddNewValue.toString(), hid);
+
+        given().contentType("application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
+                .pathParam("hid", hid)
+                .body(AddNewValue.toString())
+                .when().put(ApprovalURL)
+                .then().assertThat().statusCode(202);
+
+        given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
+                .when().get("/patients/{hid}")
+                .then()
+                .body("primary_contact_number.country_code", Matchers.equalTo(updatedValue.get("country_code")))
+                .body("primary_contact_number.area_code", Matchers.equalTo(updatedValue.get("area_code")))
+                .body("primary_contact_number.number", Matchers.equalTo(updatedValue.get("number")))
+                .body("primary_contact_number.extension", Matchers.equalTo(updatedValue.get("extension")));
+
+
+    }
+
+    @Category(ApiTest.class)
+    @Test
+    public void verifyStatusBlockFieldUpdateUsingPatientApprovalAcceptProcess() throws Exception {
+
+        String json = asString("jsons/patient/full_payload_without_ids.json");
+        String hid = createPatient(json);
+
+        String number = String.valueOf(System.currentTimeMillis()).substring(7);
+        updatedValue.put("country_code", "050");
+        updatedValue.put("area_code", "02");
+        updatedValue.put("number", number);
+        updatedValue.put("extension", "3245");
+        AddNewValue.put("primary_contact_number", updatedValue);
+
+        updatePatient(AddNewValue.toString(), hid);
+
+        given().contentType("application/json")
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
+                .pathParam("hid", hid)
+                .body(AddNewValue.toString())
+                .when().put(ApprovalURL)
+                .then().assertThat().statusCode(202);
+
+        given().pathParam("hid", hid)
+                .header(WebDriverProperties.getProperty("MCI_API_TOKEN_NAME"), token.trim())
+                .header(CLIENT_ID, userId.trim())
+                .header(FROM, email.trim())
+                .when().get("/patients/{hid}")
+                .then()
+                .body("primary_contact_number.country_code", Matchers.equalTo(updatedValue.get("country_code")))
+                .body("primary_contact_number.area_code", Matchers.equalTo(updatedValue.get("area_code")))
+                .body("primary_contact_number.number", Matchers.equalTo(updatedValue.get("number")))
+                .body("primary_contact_number.extension", Matchers.equalTo(updatedValue.get("extension")));
+
 
     }
 
